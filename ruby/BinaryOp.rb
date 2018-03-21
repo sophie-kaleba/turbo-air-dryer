@@ -76,6 +76,25 @@ class BinaryOp < Expression
 		puti "pushq %rax"
 	end
 
+	def jit_compile(env, jit_string)
+		jit_string += self.expression1.jit_compile(env, jit_string)
+		jit_string = self.expression2.jit_compile(env, jit_string)
+		jit_string += "\x5b" #popq %rbx
+		jit_string += "\x58" #popq %rax
+		case self.token.getTokenId()
+			when :Plus
+				jit_string += "\x48\x01\xd8" #addq %rabx, %rax
+			when :Minus
+				jit_string += "\x48\x29\xd8" #subq %rabx, %rax
+	
+			else
+				raise "Not yet Implemented"
+		end
+
+		jit_string += "\x50" #pushq %rax
+		return jit_string
+	end
+
 
 	def evaluate(env)
 		rg = self.expression1.evaluate(env)

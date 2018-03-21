@@ -18,6 +18,11 @@ class ExpressionStmt
 		return self.expression.compile(expr)
 	end
 
+	def jit_compile(expr, jit_string)
+		jit_string += self.expression.jit_compile(expr, jit_string)
+		return jit_string
+	end
+
 	def to_s()
 		return self.expression.to_s()
 	end

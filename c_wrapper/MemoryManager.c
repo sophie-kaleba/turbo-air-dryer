@@ -61,16 +61,20 @@ VALUE write_memory(VALUE self, VALUE dst, VALUE src, VALUE size)
 
 VALUE call_function(VALUE self, VALUE func_addr)
 {
+	fprintf(stderr, "Je suis dans call\n");
+	fflush(stdout);
 	int (*func)(void) = (int (*)(void)) NUM2LONG(func_addr);
-
-	return INT2NUM(func());
+	int caca = func();
+	fprintf(stderr, "caca= %d\n", caca);
+	fflush(stdout);	
+	return INT2NUM(caca);
 }
 
 
 VALUE dump_memory(VALUE self, VALUE start, VALUE size) {
 	char * ss_start = (char *) NUM2LONG(start);
 	for (int i = 0; i < NUM2INT(size); i++) {
-		printf("%x_", ss_start[i]);	
+		printf("%2x_", ss_start[i]);	
 	}
 	fflush(stdout);
 	return Qnil;
