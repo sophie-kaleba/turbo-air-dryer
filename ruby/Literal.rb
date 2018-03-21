@@ -41,7 +41,7 @@ class Literal < Expression
 	def jit_compile(env, jit_string)
 		case (self.token.getTokenId())
 		when :Integer
-			jit_string += "\xff\x34\x25"+sprintf("%c", self.token.svalue.to_i) #pushq $value		
+			jit_string += "\xff\x34\x25"+sprintf("%c", self.token.svalue.to_i)+"\x00\x00\x00" #pushq $value		
 		else
 			raise "Not implemented yet"
 		end
