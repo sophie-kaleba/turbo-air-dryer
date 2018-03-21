@@ -10,7 +10,7 @@ unserializer = Unserializer.new(ARGF)
 body = unserializer.readStatementList()
 
 start_address = init_memory(1024)
-jit_string = ""
+jit_string = "\x49\x89\xd9\x49\x89\xe8\x48\x89\xe7" #saves rsp, rbp and rbx in r8, r9 and rdi
 
 # somehow, we need to initiate the stack to actually push and pop values.
 # the following lines do not work
@@ -29,13 +29,12 @@ for st in body
 	jit_string += st.jit_compile(global, jit_string)
 end
 
-toto = jit_string.each_byte.map { |b| b.to_s(16) + "_"}.join
-puts toto
+#toto = jit_string.each_byte.map { |b| b.to_s(16) + "_"}.join
+#puts toto
 
-jit_string += "\xc3"
+jit_string += "\x4c\x89\xcb\x4c\x89\xc5\x48\x89\xfc\xc3" #this part restores rbx, rbp and rsp
 write_memory(start_address, jit_string, jit_string.size)
-dump_memory(start_address, jit_string.size)
-puts "hey coucou"
-call_function(start_address)
+#dump_memory(start_address, jit_string.size)
+puts call_function(start_address)
 
 
