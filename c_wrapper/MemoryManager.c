@@ -61,7 +61,7 @@ VALUE write_memory(VALUE self, VALUE dst, VALUE src, VALUE size)
 
 VALUE call_function(VALUE self, VALUE func_addr)
 {
-	int (*func)(void) = (int (*)(void)) NUM2INT(func_addr);
+	int (*func)(void) = (int (*)(void)) NUM2LONG(func_addr);
 
 	return INT2NUM(func());
 }
