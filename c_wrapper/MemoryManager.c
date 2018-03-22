@@ -2,6 +2,8 @@
 #include <assert.h>
 #include <string.h>
 #include <sys/mman.h>
+#include <errno.h>
+
 #include "ruby.h"
 
 
@@ -44,7 +46,8 @@ VALUE init_memory(VALUE self, VALUE size)
 {
 	void * memory = mmap(NULL, NUM2INT(size), PROT_EXEC | PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_PRIVATE,
 				                     -1, 0); // IGNORED
-	assert(memory != MAP_FAILED);
+	if (memory == MAP_FAILED)
+		rb_raise(rb_eRuntimeError, "mmap failed to allocate memory: %s", strerror(errno));
 
 	return LONG2NUM((long) memory);
 }
