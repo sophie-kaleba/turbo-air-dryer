@@ -21,7 +21,7 @@ jit_string = "\x49\x89\xd9\x49\x89\xe8\x48\x89\xe7" #saves rsp, rbp and rbx in r
 #"movq %rax, %rsp"= \x48\x89\xc4
 
 # we can test using
-# write_memory(start, "\x48\xc7\xc0\x05\x00\x00\x00\xc3", 8)
+# write_memory(start, "\x48\xc7\xc0\x05\x00\x00\x00\xc3")
 # which returns 5
 
 
@@ -33,7 +33,7 @@ end
 #puts toto
 
 jit_string += "\x4c\x89\xcb\x4c\x89\xc5\x48\x89\xfc\xc3" #this part restores rbx, rbp and rsp
-write_memory(start_address, jit_string, jit_string.size)
+write_memory(start_address, jit_string)
 #dump_memory(start_address, jit_string.size)
 puts call_function(start_address)
 

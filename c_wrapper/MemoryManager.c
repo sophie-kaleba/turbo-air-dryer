@@ -20,7 +20,8 @@ void Init_memory_manager();
 
 // Prototype for our method 'test1' - methods are prefixed by 'method_' here
 VALUE init_memory(VALUE self, VALUE size);
-VALUE write_memory(VALUE self, VALUE dst, VALUE src, VALUE size);
+VALUE write_memory(VALUE self, VALUE dst, VALUE src);
+VALUE write_memory_n(VALUE self, VALUE dst, VALUE src, VALUE size);
 VALUE call_function(VALUE self, VALUE func_addr);
 VALUE write_and_call_function(VALUE self, VALUE dst, VALUE src, VALUE size);
 VALUE dump_memory(VALUE self, VALUE start, VALUE size);
@@ -30,7 +31,8 @@ VALUE dump_memory(VALUE self, VALUE start, VALUE size);
 void Init_memory_manager() {
 	MemoryManager = rb_define_module("MemoryManager");
 	rb_define_method(MemoryManager, "init_memory", init_memory, 1);
-	rb_define_method(MemoryManager, "write_memory", write_memory, 3);
+	rb_define_method(MemoryManager, "write_memory", write_memory, 2);
+	rb_define_method(MemoryManager, "write_memory_n", write_memory_n, 3);
 	rb_define_method(MemoryManager, "call_function", call_function, 1);
 	rb_define_method(MemoryManager, "write_and_call_function", write_and_call_function, 3);
 	rb_define_method(MemoryManager, "dump_memory", dump_memory, 2);
@@ -52,9 +54,15 @@ VALUE init_memory(VALUE self, VALUE size)
 	return LONG2NUM((long) memory);
 }
 
-VALUE write_memory(VALUE self, VALUE dst, VALUE src, VALUE size)
+VALUE write_memory_n(VALUE self, VALUE dst, VALUE src, VALUE size)
 {
 	memcpy((void *) NUM2LONG(dst), StringValuePtr(src), NUM2INT(size));
+	return Qnil;
+}
+
+VALUE write_memory(VALUE self, VALUE dst, VALUE src)
+{
+	memcpy((void *) NUM2LONG(dst), StringValuePtr(src), RSTRING_LEN(src));
 	return Qnil;
 }
 
@@ -83,7 +91,7 @@ VALUE dump_memory(VALUE self, VALUE start, VALUE size) {
 
 VALUE write_and_call_function(VALUE self, VALUE dst, VALUE src, VALUE size)
 {
-	write_memory(self, NUM2LONG(dst), NUM2LONG(src), NUM2INT(size));
+	write_memory(self, NUM2LONG(dst), NUM2LONG(src));
 
 	return call_function(self, NUM2LONG(dst));
 }
