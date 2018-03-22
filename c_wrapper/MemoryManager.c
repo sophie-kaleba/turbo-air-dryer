@@ -42,19 +42,15 @@ void Init_memory_manager() {
 
 VALUE init_memory(VALUE self, VALUE size)
 {
-	fprintf(stderr, "init memory\n");
-
 	void * memory = mmap(NULL, NUM2INT(size), PROT_EXEC | PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_PRIVATE,
 				                     -1, 0); // IGNORED
 	assert(memory != MAP_FAILED);
 
-	printf("start of mmaped memory: %p\n", memory);
 	return LONG2NUM((long) memory);
 }
 
 VALUE write_memory(VALUE self, VALUE dst, VALUE src, VALUE size)
 {
-	printf("memcpy starts ar: %p\n", NUM2LONG(dst));
 	memcpy((void *) NUM2LONG(dst), StringValuePtr(src), NUM2INT(size));
 	return Qnil;
 }
