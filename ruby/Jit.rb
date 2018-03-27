@@ -26,7 +26,7 @@ jit_string = "\x49\x89\xd9\x49\x89\xe8\x48\x89\xe7" #saves rsp, rbp and rbx in r
 
 
 for st in body
-	jit_string += st.jit_compile(global, jit_string)
+	st.jit_compile(global, jit_string)
 end
 
 #toto = jit_string.each_byte.map { |b| b.to_s(16) + "_"}.join
@@ -34,7 +34,7 @@ end
 
 jit_string += "\x4c\x89\xcb\x4c\x89\xc5\x48\x89\xfc\xc3" #this part restores rbx, rbp and rsp
 write_memory(start_address, jit_string)
-#dump_memory(start_address, jit_string.size)
+dump_memory(start_address, jit_string.size)
 puts call_function(start_address)
 
 
