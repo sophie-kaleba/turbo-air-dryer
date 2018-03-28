@@ -38,12 +38,12 @@ end
 #toto = jit_string.each_byte.map { |b| b.to_s(16) + "_"}.join
 #puts toto
 
-jit_string << "\x90\x90\x90\x4c\x89\xcb\x4c\x89\xc5\x48\x89\xfc\x58\x50\xc3" #this part restores rbx, rbp and rsp
+jit_string << "\x90\x90\x90\x58\x4c\x89\xcb\x4c\x89\xc5\x48\x89\xfc\xc3" #this part restores rbx, rbp and rsp
 c_write_memory($start_method_segment, jit_string)
 
 
 #puts jit_string.each_byte.map { |b| b.to_s(16) + "_"}.join
-c_dump_memory($start_method_segment, jit_string.size + 10)
+#c_dump_memory($start_method_segment, jit_string.size + 10)
 puts c_call_function($start_method_segment)
 
 

@@ -14,7 +14,6 @@ def new_var(var_name, var_value=0)
     raise "Variable already in use " + var_name.to_s
   end
   new_var_addr = c_add_var($start_var_segment, var_value)
-  puts new_var_addr.to_s(16)
   $var_table[var_name] = new_var_addr
   return new_var_addr
 end

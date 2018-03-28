@@ -62,9 +62,8 @@ class Var
 		var_name = self.variable.svalue
 		new_var_addr = new_var(var_name)
 		jit_string << "\x58" #popq %rax
+		diff_rip = new_var_addr - ($start_method_segment + jit_string.size)
 		jit_string << "\x48\x89\x05" #mov %rax, ???(%rip)
-		diff_rip = new_var_addr - ($start_method_segment + jit_string.size) - 4
-		puts diff_rip.to_s(16)
 		write_int_as_4bytes(diff_rip, jit_string)
 	end
 	
