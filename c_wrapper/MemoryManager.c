@@ -61,7 +61,7 @@ VALUE call_function(VALUE self, VALUE func_addr)
 VALUE dump_memory(VALUE self, VALUE start, VALUE size) {
 	char * ss_start = (char *) NUM2LONG(start);
 	for (int i = 0; i < NUM2INT(size); i++) {
-		printf("%.2x_", ss_start[i]);
+		printf("%.2x_", (unsigned char) ss_start[i]);
 	}
 	printf("\b\n");
 	fflush(stdout);
@@ -75,7 +75,7 @@ VALUE dump_memory(VALUE self, VALUE start, VALUE size) {
 
 VALUE add_var(VALUE self, VALUE base_addr, VALUE var_value)
 {
-	printf("offset: %p", NUM2LONG(base_addr));
+	printf("offset: %p\n", NUM2LONG(base_addr));
 	static char * current_table_offset = NULL;
 	if (current_table_offset == NULL)
 		current_table_offset = (char *) NUM2LONG(base_addr) - 4;
