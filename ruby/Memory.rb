@@ -11,7 +11,7 @@ end
 
 def new_var(var_name, var_value=0)
   if $var_table[var_name] != nil
-    raise "Variable already in use " + var_name
+    raise "Variable already in use " + var_name.to_s
   end
   new_var_addr = c_add_var($start_var_segment, var_value)
   puts new_var_addr.to_s(16)
@@ -22,15 +22,22 @@ end
 
 def update_var(var_name, new_var_value)
   if $var_table[var_name] == nil
-    raise "Unknown variable " + var_name
+    raise "Unknown variable " + var_name.to_s
   end
   c_update_var($var_table[var_name], new_var_value)
 end
 
 def get_var_value(var_name)
   if $var_table[var_name] == nil
-    raise "Unknown variable " + var_name
+    raise "Unknown variable " + var_name.to_s
   end
-  $var_table[var_name]
   return c_get_var($var_table[var_name])
 end
+
+def get_var_addr(var_name)
+  if $var_table[var_name] == nil
+    raise "Unknown variable " + var_name.to_s
+  end
+  return $var_table[var_name]
+end
+	

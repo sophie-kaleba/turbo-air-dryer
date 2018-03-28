@@ -37,6 +37,7 @@ VALUE init_memory(VALUE self, VALUE size, VALUE exec)
 	if (memory == MAP_FAILED)
 		rb_raise(rb_eRuntimeError, "mmap failed to allocate memory: %s", strerror(errno));
 
+	memset(memory, 0xca, NUM2INT(size));
 	return LONG2NUM((long) memory);
 }
 
