@@ -9,13 +9,14 @@ def setup_memory_segment()
   return $start_method_segment, $start_var_segment
 end
 
-def new_var(var_name, var_value)
+def new_var(var_name, var_value=0)
   if $var_table[var_name] != nil
     raise "Variable already in use " + var_name
   end
   new_var_addr = c_add_var($start_var_segment, var_value)
   puts new_var_addr.to_s(16)
   $var_table[var_name] = new_var_addr
+  return new_var_addr
 end
 
 
