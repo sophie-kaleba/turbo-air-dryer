@@ -6,7 +6,7 @@ class Var
 #	private Expression init
 	attr_accessor :variable, :init
 
-	def initialize(variable, init)
+	def initialize(variable, init=nil)
 		self.variable = variable
 		self.init = init
 	end
@@ -53,17 +53,20 @@ class Var
 	end
 
 	def jit_compile(env, jit_string)
-		if(self.init == nil)
-			raise "Not implemented yet"
+		if(self.init == nil) # var x;
+			var_name = self.variable.svalue
+			new_var(var_name)
+			return
+
 		end
+		# var x = something;
 
 		self.init.jit_compile(env, jit_string) #after the =
-
 		var_name = self.variable.svalue
 		new_var_addr = new_var(var_name)
 		jit_string << "\x58" #popq %rax
-		diff_rip = new_var_addr - ($start_method_segment + jit_string.size)
 		jit_string << "\x48\x89\x05" #mov %rax, ???(%rip)
+		diff_rip = new_var_addr - ($start_method_segment + jit_string.size) -4
 		write_int_as_4bytes(diff_rip, jit_string)
 	end
 	

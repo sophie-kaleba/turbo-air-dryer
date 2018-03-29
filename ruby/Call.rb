@@ -69,6 +69,10 @@ class Call < Expression
 
 	end
 
+	def jit_compile(env, jit_string) 
+
+	end
+
 	def to_s()
 		return "Call " + self.function.to_s() + " " + self.arguments.to_s();
 	end

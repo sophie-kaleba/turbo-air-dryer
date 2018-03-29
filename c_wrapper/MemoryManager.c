@@ -6,6 +6,7 @@
 
 #include "ruby.h"
 
+#define VAR_SIZE 8
 
 //////////////////////////////////////////
 ////////// Used for generating the ruby
@@ -59,12 +60,14 @@ VALUE call_function(VALUE self, VALUE func_addr)
 	return INT2NUM(func());
 }
 
-VALUE dump_memory(VALUE self, VALUE start, VALUE size) {
+VALUE dump_memory(VALUE self, VALUE start, VALUE num_size) {
 	char * ss_start = (char *) NUM2LONG(start);
-	for (int i = 0; i < NUM2INT(size); i++) {
+	int size = NUM2INT(num_size);
+	printf("dump offset: %.2x\n", ss_start[2]);
+	for (int i = 0; i < size; i++) {
 		printf("%.2x_", (unsigned char) ss_start[i]);
 	}
-	printf("\b\n");
+	printf("\n");
 	fflush(stdout);
 	return Qnil;
 
@@ -79,9 +82,9 @@ VALUE add_var(VALUE self, VALUE base_addr, VALUE var_value)
 	printf("offset: %p\n", NUM2LONG(base_addr));
 	static char * current_table_offset = NULL;
 	if (current_table_offset == NULL)
-		current_table_offset = (char *) NUM2LONG(base_addr) - 4;
+		current_table_offset = (char *) NUM2LONG(base_addr) - VAR_SIZE;
 
-	current_table_offset += 4;
+	current_table_offset += VAR_SIZE;
 	*(int *)current_table_offset = NUM2LONG(var_value);
 
 	return LONG2NUM((long) current_table_offset);

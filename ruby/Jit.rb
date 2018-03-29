@@ -10,12 +10,8 @@ unserializer = Unserializer.new(ARGF)
 body = unserializer.readStatementList()
 
 setup_memory_segment()
-#new_var("caca", 0xCACA)
-#new_var("pipi", 0xBABA)
-#c_dump_memory($start_var_segment, 10)
-#update_var("caca", 0xB00B1E5)
-#c_dump_memory($start_var_segment, 20)
-#puts get_var_value("caca").to_s(16)
+puts "code "+$start_method_segment.to_s(16)
+puts "var "+$start_var_segment.to_s(16)
 
 jit_string = "\x49\x89\xd9\x49\x89\xe8\x48\x89\xe7\x90\x90\x90" #saves rsp, rbp and rbx in r8, r9 and rdi
 # somehow, we need to initiate the stack to actually push and pop values.
@@ -38,12 +34,17 @@ end
 #toto = jit_string.each_byte.map { |b| b.to_s(16) + "_"}.join
 #puts toto
 
-jit_string << "\x90\x90\x90\x58\x4c\x89\xcb\x4c\x89\xc5\x48\x89\xfc\xc3" #this part restores rbx, rbp and rsp
+jit_string << "\x90\x90\x90\x4c\x89\xcb\x4c\x89\xc5\x48\x89\xfc\xc3" #this part restores rbx, rbp and rsp
 c_write_memory($start_method_segment, jit_string)
 
 
 #puts jit_string.each_byte.map { |b| b.to_s(16) + "_"}.join
-#c_dump_memory($start_method_segment, jit_string.size + 10)
+c_dump_memory($start_method_segment, jit_string.size + 10)
 puts c_call_function($start_method_segment)
+c_dump_memory($start_var_segment, jit_string.size + 10)
+
+for i in $var_table
+	puts i[0]+" "+i[1].to_s(16)
+end
 
 

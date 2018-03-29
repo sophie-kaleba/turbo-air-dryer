@@ -86,6 +86,9 @@ class BinaryOp < Expression
 				jit_string << "\x48\x01\xd8" #addq %rabx, %rax
 			when :Minus
 				jit_string << "\x48\x29\xd8" #subq %rabx, %rax
+			when :Equal
+				
+				return Value.new(:Boolean, rg.getIntValue() == rd.getIntValue())
 	
 			else
 				raise "Not yet Implemented"

@@ -4,8 +4,11 @@ include MemoryManager
 $var_table = {}
 
 def setup_memory_segment()
-  $start_method_segment = c_init_memory(1024, 1)
-  $start_var_segment = c_init_memory(512, 0)
+  $start_var_segment = c_init_memory(4096, 0)
+  $start_method_segment = c_init_memory(4096, 1)
+  if ($start_var_segment - $start_method_segment).abs > 1<<32
+  	raise "The 2 segments are too far from each other"
+  end
   return $start_method_segment, $start_var_segment
 end
 
