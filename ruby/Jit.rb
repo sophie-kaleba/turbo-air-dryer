@@ -44,7 +44,9 @@ puts c_call_function($start_method_segment)
 c_dump_memory($start_var_segment, jit_string.size + 10)
 
 for i in $var_table
-	puts i[0]+" "+i[1].to_s(16)
+	puts i[0] + " "+i[1].to_s(16)
+	puts i[0] + " = " + get_var_value(i[0]).to_s
 end
+
 
 

@@ -20,6 +20,7 @@ class ExpressionStmt
 
 	def jit_compile(expr, jit_string)
 		self.expression.jit_compile(expr, jit_string)
+		jit_string << "\x58" #at every ;, pop the result in rax
 	end
 
 	def to_s()
