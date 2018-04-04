@@ -9,9 +9,11 @@ global = Environment.new()
 unserializer = Unserializer.new(ARGF)
 body = unserializer.readStatementList()
 
+puts
+
 setup_memory_segment()
-puts "code "+$start_method_segment.to_s(16)
-puts "var "+$start_var_segment.to_s(16)
+puts "code segment addr: " + $start_method_segment.to_s(16)
+puts "var segment addr: "  + $start_var_segment.to_s(16)
 
 jit_string = "\x49\x89\xd9\x49\x89\xe8\x48\x89\xe7\x90\x90\x90" #saves rsp, rbp and rbx in r8, r9 and rdi
 
@@ -26,13 +28,21 @@ c_write_memory($start_method_segment, jit_string)
 
 
 
-puts "===> method segment :"
+puts
+puts "===> method segment <==="
 c_dump_memory($start_method_segment, jit_string.size + 10)
+
+puts
+puts "======== Execution ========"
 puts c_call_function($start_method_segment)
 
-puts "===> var segment :"
-c_dump_memory($start_var_segment, jit_string.size + 10)
+puts
+puts "===> var segment <==="
+c_dump_memory($start_var_segment, $var_table.size * 8 + 4)
 
+
+puts
+puts "===> dump var <==="
 for i in $var_table
 	puts i[0] + " "+i[1].to_s(16)
 	puts i[0] + " = " + get_var_value(i[0]).to_s
