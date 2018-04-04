@@ -3,9 +3,9 @@ require_relative 'Expression'
 
 # Expression
 class BinaryOp < Expression
-#	private Token token
-#	private Expression expression1
-#	private Expression expression2
+	#	private Token token
+	#	private Expression expression1
+	#	private Expression expression2
 	attr_accessor :token, :expression1, :expression2, :nodeId
 
 	def initialize (token, expression1, expression2)
@@ -22,79 +22,164 @@ class BinaryOp < Expression
 		puti "popq %rbx # BinaryOp"
 		puti "popq %rax"
 		case self.token.getTokenId()
-			when :Plus
-				puti "addq %rbx, %rax"
-			when :Minus
-				puti "subq %rbx, %rax"
-			when :Asterisk
-				puti "imulq %rbx"
-			when :Slash
-				puti "xorq %rdx, %rdx"
-				puti "idivq %rbx"
-			when :Percent
-				puti "xorq %rdx, %rdx"
-				puti "idivq %rbx"
-				puti "pushq %rdx"
-				return # don't want to push %rax
-			when :Assignment
-				puti "movq %rbx, (%rax)"
-				return # don't want to push %rax because "ça casse tout"
-			when :Equal
-				puti "cmp %rbx, %rax"
-				puti "sete %cl"
-				return # don't want to push %rax
-			when :LessThan
-				puti "cmp %rbx, %rax"
-				puti "setb %cl"
-				return # don't want to push %rax
-			when :LessOrEqual
-				puti "cmp %rbx, %rax"
-				puti "setbe %cl"
-				return # don't want to push %rax
-			when :GreaterThan
-				puti "cmp %rbx, %rax"
-				puti "seta %cl"
-				return # don't want to push %rax
-			when :GreaterOrEqual
-				puti "cmp %rbx, %rax"
-				puti "setae %cl"
-				return # don't want to push %rax
-			when :NotEqual
-				puti "cmp %rbx, %rax"
-				puti "setl %cl"
-				return # don't want to push %rax
-			when :PlusAssignment
-				puti "addq %rbx, (%rax)"
-				return # don't want to push %rax
-			when :MinusAssignment
-				puti "subq %rbx, (%rax)"
-				return # don't want to push %rax
-			else
-				raise "Not yet Implemented"
+		when :Plus
+			puti "addq %rbx, %rax"
+		when :Minus
+			puti "subq %rbx, %rax"
+		when :Asterisk
+			puti "imulq %rbx"
+		when :Slash
+			puti "xorq %rdx, %rdx"
+			puti "idivq %rbx"
+		when :Percent
+			puti "xorq %rdx, %rdx"
+			puti "idivq %rbx"
+			puti "pushq %rdx"
+			return # don't want to push %rax
+		when :Assignment
+			puti "movq %rbx, (%rax)"
+			return # don't want to push %rax because "ça casse tout"
+		when :Equal
+			puti "cmp %rbx, %rax"
+			puti "sete %cl"
+			return # don't want to push %rax
+		when :LessThan
+			puti "cmp %rbx, %rax"
+			puti "setb %cl"
+			return # don't want to push %rax
+		when :LessOrEqual
+			puti "cmp %rbx, %rax"
+			puti "setbe %cl"
+			return # don't want to push %rax
+		when :GreaterThan
+			puti "cmp %rbx, %rax"
+			puti "seta %cl"
+			return # don't want to push %rax
+		when :GreaterOrEqual
+			puti "cmp %rbx, %rax"
+			puti "setae %cl"
+			return # don't want to push %rax
+		when :NotEqual
+			puti "cmp %rbx, %rax"
+			puti "setl %cl"
+			return # don't want to push %rax
+		when :PlusAssignment
+			puti "addq %rbx, (%rax)"
+			return # don't want to push %rax
+		when :MinusAssignment
+			puti "subq %rbx, (%rax)"
+			return # don't want to push %rax
+		else
+			raise "Not yet Implemented"
 		end
 
 		puti "pushq %rax"
 	end
 
 	def jit_compile(env, jit_string)
-		self.expression1.jit_compile(env, jit_string)
-		self.expression2.jit_compile(env, jit_string)
-		jit_string << "\x5b" #popq %rbx
-		jit_string << "\x58" #popq %rax
 		case self.token.getTokenId()
-			when :Plus
-				jit_string << "\x48\x01\xd8" #addq %rabx, %rax
-			when :Minus
-				jit_string << "\x48\x29\xd8" #subq %rabx, %rax
-			when :Equal
+		when :Plus
+			self.expression1.jit_compile(env, jit_string)
+			self.expression2.jit_compile(env, jit_string)
+			jit_string << "\x5b" #popq %rbx
+			jit_string << "\x58" #popq %rax
+
+			jit_string << "\x48\x01\xd8" #addq %rbx, %rax
+
+			jit_string << "\x50" #pushq %rax
+		when :Minus
+			self.expression1.jit_compile(env, jit_string)
+			self.expression2.jit_compile(env, jit_string)
+			jit_string << "\x5b" #popq %rbx
+			jit_string << "\x58" #popq %rax
+
+			jit_string << "\x48\x29\xd8" #subq %rbx, %rax
+
+			jit_string << "\x50" #pushq %rax
+		when :Slash
+			self.expression1.jit_compile(env, jit_string)
+			self.expression2.jit_compile(env, jit_string)
+			jit_string << "\x5b" #popq %rbx
+			jit_string << "\x58" #popq %rax
+
+			jit_string << "\x48\x31\xd2" # xorq rdx, rdx
+			jit_string << "\x48\xf7\xfb" # idivq %rbx
+
+			jit_string << "\x50" #pushq %rax
+
+		when :Assignment
+			if self.expression1.token.getTokenId() != :Identifier
+				raise "Cannot assign to this type:"+self.expression1.token.svalue
+			end
 				
-				return Value.new(:Boolean, rg.getIntValue() == rd.getIntValue())
-	
-			else
-				raise "Not yet Implemented"
+			self.expression2.jit_compile(env, jit_string)
+
+			jit_string <<  "\x48\x8d\x05" # lea (???(%rip)), %rax
+
+			write_diff_to(jit_string, self.expression1.token.svalue)
+
+			jit_string << "\x5b" #popq %rbx <= expression 2
+			jit_string << "\x48\x89\x18" #movq %rbx, (%rax)
+			
+			jit_string << "\x53" #pushq %rbx
+		when :PlusAssignment
+			if self.expression1.token.getTokenId() != :Identifier
+				raise "Cannot assign to this type:"+self.expression1.token.svalue
+			end
+
+			var_name = self.expression1.token.svalue
+
+			self.expression2.jit_compile(env, jit_string)
+
+			jit_string <<  "\x48\x8b\x05" #movq ???(%rip), %rax
+			write_diff_to(jit_string, var_name)
+
+			jit_string << "\x5b" #popq %rbx <= expression 2
+
+			jit_string << "\x48\x01\xc3" # addq %rax, %rbx
+
+			jit_string <<  "\x48\x8d\x05" # lea (???(%rip)), %rax
+			write_diff_to(jit_string, var_name)
+
+			jit_string << "\x48\x89\x18" #movq %rbx, (%rax)
+
+			jit_string << "\x53" #pushq %rbx
+		when :MinusAssignment
+			if self.expression1.token.getTokenId() != :Identifier
+				raise "Cannot assign to this type:"+self.expression1.token.svalue
+			end
+
+			var_name = self.expression1.token.svalue
+
+			self.expression2.jit_compile(env, jit_string)
+
+
+			jit_string <<  "\x48\x8b\x05" #movq ???(%rip), %rax
+			write_diff_to(jit_string, var_name)
+
+			jit_string << "\x5b" #popq %rbx <= expression 2
+
+			jit_string << "\x48\x29\xd8" # addq %rax, %rbx
+			jit_string << "\x48\x89\xc3" # movq %rax, %rbx
+
+			jit_string <<  "\x48\x8d\x05" # lea (???(%rip)), %rax
+			write_diff_to(jit_string, var_name)
+
+			jit_string << "\x48\x89\x18" #movq %rbx, (%rax)
+
+			jit_string << "\x53" #pushq %rbx
+		when :Equal
+			self.expression1.jit_compile(env, jit_string)
+			self.expression2.jit_compile(env, jit_string)
+			jit_string << "\x5b" #popq %rbx
+			jit_string << "\x58" #popq %rax
+
+			jit_string << "\x48\x39\xd8" # cmp %rbx, %rax
+			jit_string << "\x0f\x94\xc1" # sete %cl
+		else
+			raise "Not yet Implemented: " + self.token.getTokenId().to_s 
 		end
 
-		jit_string << "\x50" #pushq %rax
 	end
 
 
@@ -187,9 +272,9 @@ class BinaryOp < Expression
 		end
 	end
 
-    def to_s()
-	    return "BinaryOp " + self.token.to_s()
-	    + " (" + self.expression1.to_s()
-	    + ", " + self.expression2.to_s() + ")"
-    end
+	def to_s()
+		return "BinaryOp " + self.token.to_s()
+		+ " (" + self.expression1.to_s()
+		+ ", " + self.expression2.to_s() + ")"
+	end
 end

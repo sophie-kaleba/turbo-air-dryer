@@ -26,6 +26,33 @@ class IfThenElse
 		puti "jmp "
 	end
 
+	def jit_compile(env, jit_string)
+		self.condition.jit_compile(env, jit_string)
+
+		jit_string << "\x49\xc7\xc2\x01\x00\x00\x00" # movq $1, %r10
+		jit_string << "\x49\x39\xca" # cmp %rcx, %r10
+
+		jit_string << "\x0F\x85" # "\xe9" # jne ???
+		pos_jne = jit_string.size
+#		write_int_as_4bytes(0x12, jit_string)
+		
+		jit_string << "\xcc\xcc\xcc\xcc" # breakpoint
+
+#		jit_string << "\xcc"
+
+		for st in self.thn
+
+			st.jit_compile(env, jit_string)
+		end
+
+		nb_bytes_wrote = jit_string.size - pos_jne
+
+		puts "jne " + nb_bytes_wrote.to_s + " bytes forward"
+
+		# -2 is the size of jne
+		write_int_as_4bytes(nb_bytes_wrote - 2, jit_string, pos_jne)
+	end
+
 	def evaluate (env)
 		if(self.condition.evaluate(env).getBooleanValue())
 			for st in self.thn
