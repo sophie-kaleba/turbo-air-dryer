@@ -20,6 +20,11 @@ class Return
 		return Value.new(:Return, res)
 	end
 
+	def jit_compile(jit_string)
+		self.expression.jit_compile(jit_string)
+		jit_string << "\x58\x4c\x89\xcb\x4c\x89\xc5\x48\x89\xfc\xc3" #this part restores rbx, rbp and rsp
+	end
+
 	def to_s()
 		res = "Return"
 		if self.expression != nil
