@@ -21,8 +21,6 @@ for st in body
 	st.jit_compile(global, jit_string)
 end
 
-#toto = jit_string.each_byte.map { |b| b.to_s(16) + "_"}.join
-
 jit_string << "\x90\x90\x90\x4c\x89\xcb\x4c\x89\xc5\x48\x89\xfc\xc3" #this part restores rbx, rbp and rsp
 c_write_memory($start_method_segment, jit_string)
 
@@ -30,6 +28,7 @@ c_write_memory($start_method_segment, jit_string)
 
 puts
 puts "===> method segment <==="
+dump_hex_string(jit_string)
 c_dump_memory($start_method_segment, jit_string.size + 10)
 
 puts

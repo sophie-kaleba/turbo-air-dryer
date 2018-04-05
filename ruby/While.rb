@@ -21,7 +21,38 @@ class While
 		return Value.new(:Undefined)
 	end
 
-	def compile(env)
+	def jit_compile(env, jit_string)
+		before_condition = jit_string.size
+
+		self.condition.jit_compile(env, jit_string)
+
+		jit_string << "\x58" #popq %rax
+		jit_string << "\x48\x83\xf8\x00" #cmp $0, %rax 
+
+		jit_string << "\x0F\x84" # "\xe9" # je ???
+		pos_jne = jit_string.size
+		
+		jit_string << "\xcc\xcc\xcc\xcc" # breakpoint
+
+		jit_string << "\x90" # nop before compiling body
+		jit_string << "\x90" # nop before compiling body
+
+		for st in self.body
+			st.jit_compile(env, jit_string)
+		end
+
+		jit_string << "\xe9" # jmp before_condition
+		write_int_as_4bytes(before_condition - jit_string.size - 4, jit_string)
+
+		jit_string << "\x90" # nop after compiling body
+		jit_string << "\x90" # nop after compiling body
+
+		nb_bytes_wrote = jit_string.size - pos_jne
+
+		puts "jne " + nb_bytes_wrote.to_s + " bytes forward"
+
+		# -2 is the size of jne
+		write_int_as_4bytes(nb_bytes_wrote - 4, jit_string, pos_jne)
 		
 	end
 

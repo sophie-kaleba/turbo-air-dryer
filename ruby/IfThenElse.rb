@@ -38,18 +38,30 @@ class IfThenElse
 		
 		jit_string << "\xcc\xcc\xcc\xcc" # breakpoint
 
-#		jit_string << "\xcc"
+#		jit_string << "\xcc" # nop after compiling body
+#		jit_string << "\xcc" # nop after compiling body
+		
+		jit_string << "\x90" # nop after compiling body
+		jit_string << "\x90" # nop after compiling body
+
 
 		for st in self.thn
 			st.jit_compile(env, jit_string)
 		end
 
+		jit_string << "\x90" # nop after compiling body
+		jit_string << "\x90" # nop after compiling body
+
 		nb_bytes_wrote = jit_string.size - pos_jne
 
 		puts "jne " + nb_bytes_wrote.to_s + " bytes forward"
 
+		dump_hex_string(jit_string)
+
 		# -2 is the size of jne
 		write_int_as_4bytes(nb_bytes_wrote - 4, jit_string, pos_jne)
+
+		dump_hex_string(jit_string)
 	end
 
 	def evaluate (env)
