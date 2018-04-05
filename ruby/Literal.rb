@@ -40,7 +40,11 @@ class Literal < Expression
 		puts
 	end
 
-	def jit_compile(env, jit_string)
+	def fjit_compile(env, jit_string)
+
+	end
+
+	def jit_compile(jit_string)
 		case (self.token.getTokenId())
 		when :Integer
 			jit_string << "\x68" #pushq $value

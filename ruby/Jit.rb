@@ -5,7 +5,7 @@ require_relative "Unserializer"
 require_relative "Memory.rb"
 require_relative "Libcaca.rb"
 
-global = Environment.new()
+# global = Environment.new()
 unserializer = Unserializer.new(ARGF)
 body = unserializer.readStatementList()
 
@@ -18,7 +18,7 @@ puts "var segment addr: "  + $start_var_segment.to_s(16)
 jit_string = "\x49\x89\xd9\x49\x89\xe8\x48\x89\xe7\x90\x90\x90" #saves rsp, rbp and rbx in r8, r9 and rdi
 
 for st in body
-	st.jit_compile(global, jit_string)
+	st.jit_compile(jit_string)
 end
 
 jit_string << "\x90\x90\x90\x4c\x89\xcb\x4c\x89\xc5\x48\x89\xfc\xc3" #this part restores rbx, rbp and rsp

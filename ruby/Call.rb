@@ -56,6 +56,10 @@ class Call < Expression
 		raise "Function " + self.function.token.svalue.to_s + " not yet implemented"
 	end
 
+	def jit_compile(jit_string)
+
+	end
+
 	def compile(env)
 		if (self.function.token.type == :Identifier and self.function.token.svalue == "print") 
 			to_print = self.function.arguments[0].line.to_s + self.function.arguments[0].column.to_s 

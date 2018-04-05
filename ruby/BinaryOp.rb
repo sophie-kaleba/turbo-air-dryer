@@ -76,11 +76,11 @@ class BinaryOp < Expression
 		puti "pushq %rax"
 	end
 
-	def jit_compile(env, jit_string)
+	def jit_compile(jit_string)
 		case self.token.getTokenId()
 		when :Plus
-			self.expression1.jit_compile(env, jit_string)
-			self.expression2.jit_compile(env, jit_string)
+			self.expression1.jit_compile(jit_string)
+			self.expression2.jit_compile(jit_string)
 			jit_string << "\x5b" #popq %rbx
 			jit_string << "\x58" #popq %rax
 
@@ -88,8 +88,8 @@ class BinaryOp < Expression
 
 			jit_string << "\x50" #pushq %rax
 		when :Minus
-			self.expression1.jit_compile(env, jit_string)
-			self.expression2.jit_compile(env, jit_string)
+			self.expression1.jit_compile(jit_string)
+			self.expression2.jit_compile(jit_string)
 			jit_string << "\x5b" #popq %rbx
 			jit_string << "\x58" #popq %rax
 
@@ -97,8 +97,8 @@ class BinaryOp < Expression
 
 			jit_string << "\x50" #pushq %rax
 		when :Slash
-			self.expression1.jit_compile(env, jit_string)
-			self.expression2.jit_compile(env, jit_string)
+			self.expression1.jit_compile(jit_string)
+			self.expression2.jit_compile(jit_string)
 			jit_string << "\x5b" #popq %rbx
 			jit_string << "\x58" #popq %rax
 
@@ -112,7 +112,7 @@ class BinaryOp < Expression
 				raise "Cannot assign to this type:"+self.expression1.token.svalue
 			end
 				
-			self.expression2.jit_compile(env, jit_string)
+			self.expression2.jit_compile(jit_string)
 
 			jit_string <<  "\x48\x8d\x05" # lea (???(%rip)), %rax
 
@@ -129,7 +129,7 @@ class BinaryOp < Expression
 
 			var_name = self.expression1.token.svalue
 
-			self.expression2.jit_compile(env, jit_string)
+			self.expression2.jit_compile(jit_string)
 
 			jit_string <<  "\x48\x8b\x05" #movq ???(%rip), %rax
 			write_diff_to(jit_string, var_name)
@@ -151,7 +151,7 @@ class BinaryOp < Expression
 
 			var_name = self.expression1.token.svalue
 
-			self.expression2.jit_compile(env, jit_string)
+			self.expression2.jit_compile(jit_string)
 
 
 			jit_string <<  "\x48\x8b\x05" #movq ???(%rip), %rax
@@ -169,8 +169,8 @@ class BinaryOp < Expression
 
 			jit_string << "\x53" #pushq %rbx
 		when :Equal
-			self.expression1.jit_compile(env, jit_string)
-			self.expression2.jit_compile(env, jit_string)
+			self.expression1.jit_compile(jit_string)
+			self.expression2.jit_compile(jit_string)
 			jit_string << "\x5b" #popq %rbx
 			jit_string << "\x58" #popq %rax
 
@@ -180,8 +180,8 @@ class BinaryOp < Expression
 			jit_string << "\x50" #pushq %rax
 			
 		when :LessOrEqual
-			self.expression1.jit_compile(env, jit_string)
-			self.expression2.jit_compile(env, jit_string)
+			self.expression1.jit_compile(jit_string)
+			self.expression2.jit_compile(jit_string)
 			jit_string << "\x5b" #popq %rbx
 			jit_string << "\x58" #popq %rax
 
@@ -191,8 +191,8 @@ class BinaryOp < Expression
 			jit_string << "\x50" #pushq %rax
 
 		when :GreaterOrEqual
-			self.expression1.jit_compile(env, jit_string)
-			self.expression2.jit_compile(env, jit_string)
+			self.expression1.jit_compile(jit_string)
+			self.expression2.jit_compile(jit_string)
 			jit_string << "\x5b" #popq %rbx
 			jit_string << "\x58" #popq %rax
 
@@ -201,8 +201,8 @@ class BinaryOp < Expression
 			jit_string << "\x48\x0f\xbe\xc0" #movsqb %al, %rax
 			jit_string << "\x50" #pushq %rax
 		when :NotEqual
-			self.expression1.jit_compile(env, jit_string)
-			self.expression2.jit_compile(env, jit_string)
+			self.expression1.jit_compile(jit_string)
+			self.expression2.jit_compile(jit_string)
 			jit_string << "\x5b" #popq %rbx
 			jit_string << "\x58" #popq %rax
 
@@ -211,8 +211,8 @@ class BinaryOp < Expression
 			jit_string << "\x48\x0f\xbe\xc0" #movsqb %al, %rax
 			jit_string << "\x50" #pushq %rax
 		when :LessThan
-			self.expression1.jit_compile(env, jit_string)
-			self.expression2.jit_compile(env, jit_string)
+			self.expression1.jit_compile(jit_string)
+			self.expression2.jit_compile(jit_string)
 			jit_string << "\x5b" #popq %rbx
 			jit_string << "\x58" #popq %rax
 
@@ -221,8 +221,8 @@ class BinaryOp < Expression
 			jit_string << "\x48\x0f\xbe\xc0" #movsqb %al, %rax
 			jit_string << "\x50" #pushq %rax
 		when :GreaterThan
-			self.expression1.jit_compile(env, jit_string)
-			self.expression2.jit_compile(env, jit_string)
+			self.expression1.jit_compile(jit_string)
+			self.expression2.jit_compile(jit_string)
 			jit_string << "\x5b" #popq %rbx
 			jit_string << "\x58" #popq %rax
 

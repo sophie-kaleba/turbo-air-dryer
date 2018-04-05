@@ -36,7 +36,7 @@ class PostfixOp < Expression
 		end
 	end
 
-	def jit_compile(env, jit_string)
+	def jit_compile(jit_string)
 		if self.expression.token.getTokenId() != :Identifier
 			raise "Operation " + self.token.type.to_s + " can't apply to type: "+self.expression.token.svalue
 		end

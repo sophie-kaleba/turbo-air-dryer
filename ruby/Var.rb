@@ -52,7 +52,7 @@ class Var
 		return
 	end
 
-	def jit_compile(env, jit_string)
+	def jit_compile(jit_string)
 		if(self.init == nil) # var x;
 			var_name = self.variable.svalue
 			new_var(var_name)
@@ -61,7 +61,7 @@ class Var
 		end
 		# var x = something;
 
-		self.init.jit_compile(env, jit_string) #after the =
+		self.init.jit_compile(jit_string) #after the =
 		var_name = self.variable.svalue
 		new_var(var_name)
 

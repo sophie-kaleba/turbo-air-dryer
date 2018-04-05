@@ -26,8 +26,8 @@ class IfThenElse
 		puti "jmp "
 	end
 
-	def jit_compile(env, jit_string)
-		self.condition.jit_compile(env, jit_string)
+	def jit_compile(jit_string)
+		self.condition.jit_compile(jit_string)
 
 		jit_string << "\x58" #popq %rax
 		jit_string << "\x48\x83\xf8\x00" #cmp $0, %rax 
@@ -46,7 +46,7 @@ class IfThenElse
 
 
 		for st in self.thn
-			st.jit_compile(env, jit_string)
+			st.jit_compile(jit_string)
 		end
 
 		jit_string << "\x90" # nop after compiling body
