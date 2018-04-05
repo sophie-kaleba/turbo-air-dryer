@@ -179,6 +179,57 @@ class BinaryOp < Expression
 			jit_string << "\x48\x0f\xbe\xc0" #movsqb %al, %rax
 			jit_string << "\x50" #pushq %rax
 			
+		when :LessOrEqual
+			self.expression1.jit_compile(env, jit_string)
+			self.expression2.jit_compile(env, jit_string)
+			jit_string << "\x5b" #popq %rbx
+			jit_string << "\x58" #popq %rax
+
+			jit_string << "\x48\x39\xd8" # cmp %rbx, %rax
+			jit_string << "\x0f\x96\xc0" # setbe %al
+			jit_string << "\x48\x0f\xbe\xc0" #movsqb %al, %rax
+			jit_string << "\x50" #pushq %rax
+
+		when :GreaterOrEqual
+			self.expression1.jit_compile(env, jit_string)
+			self.expression2.jit_compile(env, jit_string)
+			jit_string << "\x5b" #popq %rbx
+			jit_string << "\x58" #popq %rax
+
+			jit_string << "\x48\x39\xd8" # cmp %rbx, %rax
+			jit_string << "\x0f\x93\xc0" # setae %al
+			jit_string << "\x48\x0f\xbe\xc0" #movsqb %al, %rax
+			jit_string << "\x50" #pushq %rax
+		when :NotEqual
+			self.expression1.jit_compile(env, jit_string)
+			self.expression2.jit_compile(env, jit_string)
+			jit_string << "\x5b" #popq %rbx
+			jit_string << "\x58" #popq %rax
+
+			jit_string << "\x48\x39\xd8" # cmp %rbx, %rax
+			jit_string << "\x0f\x9c\xc0" # setl %al
+			jit_string << "\x48\x0f\xbe\xc0" #movsqb %al, %rax
+			jit_string << "\x50" #pushq %rax
+		when :LessThan
+			self.expression1.jit_compile(env, jit_string)
+			self.expression2.jit_compile(env, jit_string)
+			jit_string << "\x5b" #popq %rbx
+			jit_string << "\x58" #popq %rax
+
+			jit_string << "\x48\x39\xd8" # cmp %rbx, %rax
+			jit_string << "\x0f\x92\xc0" # setb %al
+			jit_string << "\x48\x0f\xbe\xc0" #movsqb %al, %rax
+			jit_string << "\x50" #pushq %rax
+		when :GreaterThan
+			self.expression1.jit_compile(env, jit_string)
+			self.expression2.jit_compile(env, jit_string)
+			jit_string << "\x5b" #popq %rbx
+			jit_string << "\x58" #popq %rax
+
+			jit_string << "\x48\x39\xd8" # cmp %rbx, %rax
+			jit_string << "\x0f\x97\xc0" # seta %al
+			jit_string << "\x48\x0f\xbe\xc0" #movsqb %al, %rax
+			jit_string << "\x50" #pushq %rax
 		else
 			raise "Not yet Implemented: " + self.token.getTokenId().to_s 
 		end
