@@ -175,7 +175,10 @@ class BinaryOp < Expression
 			jit_string << "\x58" #popq %rax
 
 			jit_string << "\x48\x39\xd8" # cmp %rbx, %rax
-			jit_string << "\x0f\x94\xc1" # sete %cl
+			jit_string << "\x0f\x94\xc0" # sete %al
+			jit_string << "\x48\x0f\xbe\xc0" #movsqb %al, %rax
+			jit_string << "\x50" #pushq %rax
+			# push
 		else
 			raise "Not yet Implemented: " + self.token.getTokenId().to_s 
 		end

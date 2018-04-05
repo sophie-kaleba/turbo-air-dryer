@@ -29,10 +29,10 @@ class IfThenElse
 	def jit_compile(env, jit_string)
 		self.condition.jit_compile(env, jit_string)
 
-		jit_string << "\x49\xc7\xc2\x01\x00\x00\x00" # movq $1, %r10
-		jit_string << "\x49\x39\xca" # cmp %rcx, %r10
+		jit_string << "\x58" #popq %rax
+		jit_string << "\x48\x83\xf8\x00" #cmp $0, %rax 
 
-		jit_string << "\x0F\x85" # "\xe9" # jne ???
+		jit_string << "\x0F\x84" # "\xe9" # je ???
 		pos_jne = jit_string.size
 #		write_int_as_4bytes(0x12, jit_string)
 		
@@ -41,7 +41,6 @@ class IfThenElse
 #		jit_string << "\xcc"
 
 		for st in self.thn
-
 			st.jit_compile(env, jit_string)
 		end
 
@@ -50,7 +49,7 @@ class IfThenElse
 		puts "jne " + nb_bytes_wrote.to_s + " bytes forward"
 
 		# -2 is the size of jne
-		write_int_as_4bytes(nb_bytes_wrote - 2, jit_string, pos_jne)
+		write_int_as_4bytes(nb_bytes_wrote - 4, jit_string, pos_jne)
 	end
 
 	def evaluate (env)
