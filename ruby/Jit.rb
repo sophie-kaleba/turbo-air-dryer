@@ -27,25 +27,27 @@ c_write_memory($start_method_segment, jit_string)
 
 
 puts
-puts "===> method segment <==="
+puts "\e[31;1m===> method segment <===\e[m"
 dump_hex_string(jit_string)
 c_dump_memory($start_method_segment, jit_string.size + 10)
+puts "\e[31;1m========================\e[m"
 
 puts
-puts "======== Execution ========"
+puts "\e[32;1m======== Execution ========\e[m"
 puts c_call_function($start_method_segment)
+puts "\e[32;1m===========================\e[m"
 
 puts
-puts "===> var segment <==="
+puts "\e[31;1m===> var segment <===\e[m"
 c_dump_memory($start_var_segment, $var_table.size * 8 + 4)
-
+puts "\e[31;1m=====================\e[m"
 
 puts
-puts "===> dump var <==="
+puts "\e[31;1m===> dump var <===\e[m"
 for i in $var_table
-	puts i[0] + " "+i[1].to_s(16)
-	puts i[0] + " = " + get_var_value(i[0]).to_s
+	puts i[1].to_s(16) + i[0] + " = " + get_var_value(i[0]).to_s
 end
+puts "\e[31;1m==================\e[m"
 
 
 
