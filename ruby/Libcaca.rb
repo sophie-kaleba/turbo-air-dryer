@@ -37,9 +37,24 @@ def dump_hex_string(string)
 end
 
 def save_regs(jit_string)
-	jit_string << "\x53\x54\x41\x54\x41\x55\x41\x56\x41\x57\x90\x90\x90"
+	jit_string << "\x53"     # push   rbx
+	jit_string << "\x54"     # push   rsp
+	jit_string << "\x41\x54" # push   r12
+	jit_string << "\x41\x55" # push   r13
+	jit_string << "\x41\x56" # push   r14
+	jit_string << "\x41\x57" # push   r15
+
+	jit_string << "\x90\x90\x90" # NOP NOP NOP
 end
 
 def restore_regs(jit_string)
-	jit_string << "\x90\x90\x90\x41\x5f\x41\x5e\x41\x5d\x41\x5c\x5c\x5b"
+	jit_string << "\x90\x90\x90" # NOP NOP NOP
+
+	jit_string << "\x41\x5f" # pop    r15
+	jit_string << "\x41\x5e" # pop    r14
+	jit_string << "\x41\x5d" # pop    r13
+	jit_string << "\x41\x5c" # pop    r12
+	jit_string << "\x5c"     # pop    rsp
+	jit_string << "\x5b"     # pop    rbx
 end
+
