@@ -1,14 +1,14 @@
 require_relative 'Expression'
 
 class Call < Expression
-#    private Expression function;
-#    private List<Expression> arguments;i
+	#    private Expression function;
+	#    private List<Expression> arguments;i
 	param2reg = ["\x5f" ,#mov ???, rdi
-		       		"\x5e" ,#mov ???, rsi
-		       		"\x5a" ,#mov ???, rdx
-		       		"\x59" ,#mov ???, rcx
-		       		"\x41\x58" ,#mov ???, r8
-		       		"\x41\x59"] #mov ???, r9
+	      "\x5e" ,#mov ???, rsi
+	      "\x5a" ,#mov ???, rdx
+	      "\x59" ,#mov ???, rcx
+	      "\x41\x58" ,#mov ???, r8
+	      "\x41\x59"] #mov ???, r9
 
 	attr_accessor :function, :arguments, :nodeId
 
@@ -68,9 +68,9 @@ class Call < Expression
 			if $var_table[self.function.token.svalue].size == 1
 				raise self.function.token.svalue+" is not a function"
 			end
-			
+
 			nb_arg = $var_table[self.function.token.svalue][0].size
-			
+
 			# put all parameters in registers
 			if nb_arg != self.arguments.length
 				raise "Wrong number of argument for function : " + func.token.svalue
@@ -79,9 +79,12 @@ class Call < Expression
 				self.arguments[arg_index].jit_compile(jit_string)
 				jit_string << param2reg[arg_index]
 			end
-			jit_string << "\xb8\x00\x00\x00\x00\xe8" #call
+
+			# jit_string << "\xb8\x00\x00\x00\x00" # mov 0, %eax
+			jit_string << "\xe8" #call
 			write_diff_to(jit_string, self.function.token.svalue)
-			jit_string << "\x50"
+
+			jit_string << "\x50" # push %rax
 		end
 	end
 

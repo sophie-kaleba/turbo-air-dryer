@@ -23,7 +23,7 @@ for st in body
 end
 
 restore_regs(jit_string) #this part restores rbx, rbp and rsp
-jit_string << "\xcc\xc3"
+jit_string << "\xc3"
 c_write_memory($start_method_segment, jit_string)
 
 
@@ -53,7 +53,11 @@ puts "\e[31;1m=====================\e[m"
 puts
 puts "\e[31;1m===> dump var <===\e[m"
 for i in $var_table
-	puts i[1].to_s(16) +" "+ i[0] + " = " + get_var_value(i[0]).to_s
+	if i[1].is_a?(Array)
+		puts i[1][1].to_s(16) + " = function " + i[0]
+	else
+		puts i[1].to_s(16) +" "+ i[0] + " = " + get_var_value(i[0]).to_s
+	end
 end
 puts "\e[31;1m==================\e[m"
 

@@ -25,7 +25,7 @@ class Return
 		jit_string << "\x58"
 		restore_regs(jit_string)
 		jit_string << "\x5d"
-		jit_string << "\xcc\xc3"
+		jit_string << "\xc3"
 	end
 
 	def jit_compile(jit_string)

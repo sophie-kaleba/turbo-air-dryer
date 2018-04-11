@@ -21,7 +21,7 @@ end
 def write_diff_to(jit_string, var_name)
 	puts get_var_addr(var_name).class
 	if get_var_addr(var_name).is_a? Array
-		magic = 1
+		magic = 2
 		addr = get_var_addr(var_name)[1]
 	else
 		magic = 0

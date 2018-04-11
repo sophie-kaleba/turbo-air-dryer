@@ -40,7 +40,6 @@ class Function < Expression
 			st.funjit_compile(funjit_string, baby_map)
 		end
 
-		funjit_string << "\xcc"
 		restore_regs(funjit_string)
 		funjit_string << "\x5d\xc3"
 		func_addr = new_func(self.name.svalue, funjit_string)
