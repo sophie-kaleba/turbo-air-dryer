@@ -19,17 +19,13 @@ def write_int_as_4bytes(num, jit_string, pos = -1)
 end
 
 def write_diff_to(jit_string, var_name)
-	puts get_var_addr(var_name).class
 	if get_var_addr(var_name).is_a? Array
-		magic = 2
 		addr = get_var_addr(var_name)[1]
 	else
-		magic = 0
 		addr = get_var_addr(var_name)
 	end
-	diff_rip = addr - ($start_method_segment + jit_string.size) - 4 \
-		- 2 # (DARK) MAGIC NUMBER
-	write_int_as_4bytes(diff_rip + magic , jit_string)
+	diff_rip = addr - ($start_method_segment + jit_string.size) - 4
+	write_int_as_4bytes(diff_rip, jit_string)
 end
 
 def dump_hex_string(string)
