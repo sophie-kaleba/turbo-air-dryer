@@ -47,7 +47,7 @@ puts "\e[32;1m===========================\e[m"
 
 puts
 puts "\e[31;1m===> var segment <===\e[m"
-c_dump_memory($start_var_segment, $var_table.size * 8 + 4)
+c_dump_var_segment($start_var_segment)
 puts "\e[31;1m=====================\e[m"
 
 puts

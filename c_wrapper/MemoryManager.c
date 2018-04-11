@@ -64,14 +64,12 @@ VALUE call_function(VALUE self, VALUE func_addr)
 VALUE dump_memory(VALUE self, VALUE start, VALUE num_size) {
 	char * ss_start = (char *) NUM2LONG(start);
 	int size = NUM2INT(num_size);
-	printf("dump offset: %.2x\n", ss_start[2]);
 	for (int i = 0; i < size; i++) {
 		printf("%.2x_", (unsigned char) ss_start[i]);
 	}
 	printf("\n");
 	fflush(stdout);
 	return Qnil;
-
 }
 
 /////////////////////////////////////////////////
@@ -79,6 +77,17 @@ VALUE dump_memory(VALUE self, VALUE start, VALUE num_size) {
 /////////////////////////////////////////////////
 
 static char * current_table_offset = NULL;
+
+VALUE dump_var_segment(VALUE self, VALUE start)
+{
+	char *ss_start = (char *) NUM2LONG(start);
+	while(ss_start < current_table_offset)
+		printf("%.2x_", (unsigned char) ss_start++);
+
+	printf("\n");
+	fflush(stdout);
+	return Qnil;
+}
 
 VALUE init_var_segment(VALUE self, VALUE base_addr)
 {
@@ -137,8 +146,10 @@ void Init_memory_manager() {
 	rb_define_method(MemoryManager, "c_write_memory_n", write_memory_n, 3);
 	rb_define_method(MemoryManager, "c_call_function", call_function, 1);
 	rb_define_method(MemoryManager, "c_write_and_call_function", write_and_call_function, 3);
+
 	rb_define_method(MemoryManager, "c_dump_memory", dump_memory, 2);
 	rb_define_method(MemoryManager, "c_init_var_segment", init_var_segment, 1);
+	rb_define_method(MemoryManager, "c_dump_var_segment", dump_var_segment, 1);
 	rb_define_method(MemoryManager, "c_add_var", add_var, 1);
 	rb_define_method(MemoryManager, "c_add_func", add_func, 1);
 	rb_define_method(MemoryManager, "c_update_var", update_var, 2);
