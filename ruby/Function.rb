@@ -30,10 +30,10 @@ class Function < Expression
 
 		baby_map = Hash.new(nil)
 
-		for arg_index in 0..parameters.size
-			baby_map[parameters[arg_index]] = arg_index * 8
+		for arg_index in 0..(parameters.size - 1)
+			baby_map[parameters[arg_index].svalue] = arg_index * 8
 		end
-		
+
 		funjit_string = "\x55\x48\x89\xe5"
 		save_regs(funjit_string)
 		for st in body
