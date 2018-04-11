@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdint.h>
 #include <assert.h>
 #include <string.h>
 #include <sys/mman.h>
@@ -81,14 +82,14 @@ static char * current_table_offset = NULL;
 
 VALUE init_var_segment(VALUE self, VALUE base_addr)
 {
-	current_table_offset = NUM2LONG(base_addr);
+	current_table_offset = (char *)NUM2LONG(base_addr);
 	return Qnil;
 }
 	
 VALUE add_var(VALUE self, VALUE var_value)
 {
 	char *local_offset = current_table_offset;
-	*(int *)current_table_offset = NUM2LONG(var_value);
+	*(int64_t *)current_table_offset = NUM2LONG(var_value);
 	current_table_offset += VAR_SIZE;
 
 	return LONG2NUM((long) local_offset);
@@ -106,7 +107,7 @@ VALUE add_func(VALUE self, VALUE func_value)
 
 VALUE update_var(VALUE self, VALUE var_address, VALUE new_var_value)
 {
-	*(int *)NUM2LONG(var_address) = NUM2LONG(new_var_value);
+	*(int64_t *)NUM2LONG(var_address) = NUM2LONG(new_var_value);
 
 	return Qnil;
 }
