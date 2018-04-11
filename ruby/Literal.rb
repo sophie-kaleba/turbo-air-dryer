@@ -45,6 +45,9 @@ class Literal < Expression
 		when :Integer
 			jit_string << "\x68" #pushq $value
 			write_int_as_4bytes(self.token.svalue.to_i, jit_string)
+		when :Identifier
+			jit_string << "\x67\x48\x89\x84\x24" # movq ???(%esp), rax
+			write_int_as_4bytes(env[self.token.svalue], jit_string)
 		else
 			raise "Not implemented yet"
 		end
