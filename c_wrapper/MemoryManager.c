@@ -77,17 +77,31 @@ VALUE dump_memory(VALUE self, VALUE start, VALUE num_size) {
 ////////// c functions - variable segment
 /////////////////////////////////////////////////
 
-VALUE add_var(VALUE self, VALUE base_addr, VALUE var_value)
+static char * current_table_offset = NULL;
+
+VALUE init_var_segment(VALUE self, VALUE base_addr)
 {
-	printf("offset: %p\n", NUM2LONG(base_addr));
-	static char * current_table_offset = NULL;
-	if (current_table_offset == NULL)
-		current_table_offset = (char *) NUM2LONG(base_addr) - VAR_SIZE;
-
-	current_table_offset += VAR_SIZE;
+	current_table_offset = NUM2LONG(base_addr);
+	return Qnil;
+}
+	
+VALUE add_var(VALUE self, VALUE var_value)
+{
+	char *local_offset = current_table_offset;
 	*(int *)current_table_offset = NUM2LONG(var_value);
+	current_table_offset += VAR_SIZE;
 
-	return LONG2NUM((long) current_table_offset);
+	return LONG2NUM((long) local_offset);
+}
+
+VALUE add_func(VALUE self, VALUE func_value)
+{
+	char *local_offset = current_table_offset;
+	size_t fun_size = RSTRING_LEN(func_value);
+	memcpy(local_offset, StringValuePtr(func_value), fun_size);
+	current_table_offset += fun_size;
+
+	return LONG2NUM((long) local_offset);
 }
 
 VALUE update_var(VALUE self, VALUE var_address, VALUE new_var_value)
@@ -123,7 +137,9 @@ void Init_memory_manager() {
 	rb_define_method(MemoryManager, "c_call_function", call_function, 1);
 	rb_define_method(MemoryManager, "c_write_and_call_function", write_and_call_function, 3);
 	rb_define_method(MemoryManager, "c_dump_memory", dump_memory, 2);
-	rb_define_method(MemoryManager, "c_add_var", add_var, 2);
+	rb_define_method(MemoryManager, "c_init_var_segment", init_var_segment, 1);
+	rb_define_method(MemoryManager, "c_add_var", add_var, 1);
+	rb_define_method(MemoryManager, "c_add_func", add_func, 1);
 	rb_define_method(MemoryManager, "c_update_var", update_var, 2);
 	rb_define_method(MemoryManager, "c_get_var", get_var, 1);
 }

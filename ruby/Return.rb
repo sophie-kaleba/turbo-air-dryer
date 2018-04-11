@@ -20,9 +20,19 @@ class Return
 		return Value.new(:Return, res)
 	end
 
+	def funjit_compile(jit_string, env)
+		self.expression.funjit_compile(jit_string, env)
+		jit_string << "\x58"
+		restore_regs(jit_string)
+		jit_string << "\x5d"
+		jit_string << "\xcc\xc3"
+	end
+
 	def jit_compile(jit_string)
 		self.expression.jit_compile(jit_string)
-		jit_string << "\x58\x4c\x89\xcb\x4c\x89\xc5\x48\x89\xfc\xc3" #this part restores rbx, rbp and rsp
+		jit_string << "\x58"
+		restore_regs(jit_string)
+		jit_string << "\xc3"
 	end
 
 	def to_s()

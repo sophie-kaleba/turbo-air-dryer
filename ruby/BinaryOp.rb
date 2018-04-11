@@ -236,6 +236,167 @@ class BinaryOp < Expression
 
 	end
 
+	def funjit_compile(jit_string, env)
+		case self.token.getTokenId()
+		when :Plus
+			self.expression1.funjit_compile(jit_string, env)
+			self.expression2.funjit_compile(jit_string, env)
+			jit_string << "\x5b" #popq %rbx
+			jit_string << "\x58" #popq %rax
+
+			jit_string << "\x48\x01\xd8" #addq %rbx, %rax
+
+			jit_string << "\x50" #pushq %rax
+		when :Minus
+			self.expression1.funjit_compile(jit_string, env)
+			self.expression2.funjit_compile(jit_string, env)
+			jit_string << "\x5b" #popq %rbx
+			jit_string << "\x58" #popq %rax
+
+			jit_string << "\x48\x29\xd8" #subq %rbx, %rax
+
+			jit_string << "\x50" #pushq %rax
+		when :Slash
+			self.expression1.funjit_compile(jit_string, env)
+			self.expression2.funjit_compile(jit_string, env)
+			jit_string << "\x5b" #popq %rbx
+			jit_string << "\x58" #popq %rax
+
+			jit_string << "\x48\x31\xd2" # xorq rdx, rdx
+			jit_string << "\x48\xf7\xfb" # idivq %rbx
+
+			jit_string << "\x50" #pushq %rax
+
+		when :Assignment
+			if self.expression1.token.getTokenId() != :Identifier
+				raise "Cannot assign to this type:"+self.expression1.token.svalue
+			end
+
+			self.expression2.funjit_compile(jit_string, env)
+
+			jit_string <<  "\x48\x8d\x05" # lea (???(%rip)), %rax
+
+			write_diff_to(jit_string, self.expression1.token.svalue)
+
+			jit_string << "\x5b" #popq %rbx <= expression 2
+			jit_string << "\x48\x89\x18" #movq %rbx, (%rax)
+
+			jit_string << "\x53" #pushq %rbx
+		when :PlusAssignment
+			if self.expression1.token.getTokenId() != :Identifier
+				raise "Cannot assign to this type:"+self.expression1.token.svalue
+			end
+
+			var_name = self.expression1.token.svalue
+
+			self.expression2.funjit_compile(jit_string, env)
+
+			jit_string <<  "\x48\x8b\x05" #movq ???(%rip), %rax
+			write_diff_to(jit_string, var_name)
+
+			jit_string << "\x5b" #popq %rbx <= expression 2
+
+			jit_string << "\x48\x01\xc3" # addq %rax, %rbx
+
+			jit_string <<  "\x48\x8d\x05" # lea (???(%rip)), %rax
+			write_diff_to(jit_string, var_name)
+
+			jit_string << "\x48\x89\x18" #movq %rbx, (%rax)
+
+			jit_string << "\x53" #pushq %rbx
+		when :MinusAssignment
+			if self.expression1.token.getTokenId() != :Identifier
+				raise "Cannot assign to this type:"+self.expression1.token.svalue
+			end
+
+			var_name = self.expression1.token.svalue
+
+			self.expression2.funjit_compile(jit_string, env)
+
+
+			jit_string <<  "\x48\x8b\x05" #movq ???(%rip), %rax
+			write_diff_to(jit_string, var_name)
+
+			jit_string << "\x5b" #popq %rbx <= expression 2
+
+			jit_string << "\x48\x29\xd8" # addq %rax, %rbx
+			jit_string << "\x48\x89\xc3" # movq %rax, %rbx
+
+			jit_string <<  "\x48\x8d\x05" # lea (???(%rip)), %rax
+			write_diff_to(jit_string, var_name)
+
+			jit_string << "\x48\x89\x18" #movq %rbx, (%rax)
+
+			jit_string << "\x53" #pushq %rbx
+		when :Equal
+			self.expression1.funjit_compile(jit_string, env)
+			self.expression2.funjit_compile(jit_string, env)
+			jit_string << "\x5b" #popq %rbx
+			jit_string << "\x58" #popq %rax
+
+			jit_string << "\x48\x39\xd8" # cmp %rbx, %rax
+			jit_string << "\x0f\x94\xc0" # sete %al
+			jit_string << "\x48\x0f\xbe\xc0" #movsqb %al, %rax
+			jit_string << "\x50" #pushq %rax
+
+		when :LessOrEqual
+			self.expression1.funjit_compile(jit_string, env)
+			self.expression2.funjit_compile(jit_string, env)
+			jit_string << "\x5b" #popq %rbx
+			jit_string << "\x58" #popq %rax
+
+			jit_string << "\x48\x39\xd8" # cmp %rbx, %rax
+			jit_string << "\x0f\x96\xc0" # setbe %al
+			jit_string << "\x48\x0f\xbe\xc0" #movsqb %al, %rax
+			jit_string << "\x50" #pushq %rax
+
+		when :GreaterOrEqual
+			self.expression1.funjit_compile(jit_string, env)
+			self.expression2.funjit_compile(jit_string, env)
+			jit_string << "\x5b" #popq %rbx
+			jit_string << "\x58" #popq %rax
+
+			jit_string << "\x48\x39\xd8" # cmp %rbx, %rax
+			jit_string << "\x0f\x93\xc0" # setae %al
+			jit_string << "\x48\x0f\xbe\xc0" #movsqb %al, %rax
+			jit_string << "\x50" #pushq %rax
+		when :NotEqual
+			self.expression1.funjit_compile(jit_string, env)
+			self.expression2.funjit_compile(jit_string, env)
+			jit_string << "\x5b" #popq %rbx
+			jit_string << "\x58" #popq %rax
+
+			jit_string << "\x48\x39\xd8" # cmp %rbx, %rax
+			jit_string << "\x0f\x9c\xc0" # setl %al
+			jit_string << "\x48\x0f\xbe\xc0" #movsqb %al, %rax
+			jit_string << "\x50" #pushq %rax
+		when :LessThan
+			self.expression1.funjit_compile(jit_string, env)
+			self.expression2.funjit_compile(jit_string, env)
+			jit_string << "\x5b" #popq %rbx
+			jit_string << "\x58" #popq %rax
+
+			jit_string << "\x48\x39\xd8" # cmp %rbx, %rax
+			jit_string << "\x0f\x92\xc0" # setb %al
+			jit_string << "\x48\x0f\xbe\xc0" #movsqb %al, %rax
+			jit_string << "\x50" #pushq %rax
+		when :GreaterThan
+			self.expression1.funjit_compile(jit_string, env)
+			self.expression2.funjit_compile(jit_string, env)
+			jit_string << "\x5b" #popq %rbx
+			jit_string << "\x58" #popq %rax
+
+			jit_string << "\x48\x39\xd8" # cmp %rbx, %rax
+			jit_string << "\x0f\x97\xc0" # seta %al
+			jit_string << "\x48\x0f\xbe\xc0" #movsqb %al, %rax
+			jit_string << "\x50" #pushq %rax
+		else
+			raise "Not yet Implemented: " + self.token.getTokenId().to_s 
+		end
+
+	end
+
+
 
 	def evaluate(env)
 		rg = self.expression1.evaluate(env)

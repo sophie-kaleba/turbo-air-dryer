@@ -40,8 +40,14 @@ class Literal < Expression
 		puts
 	end
 
-	def fjit_compile(env, jit_string)
-
+	def funjit_compile(jit_string, env)
+		case (self.token.getTokenId())
+		when :Integer
+			jit_string << "\x68" #pushq $value
+			write_int_as_4bytes(self.token.svalue.to_i, jit_string)
+		else
+			raise "Not implemented yet"
+		end
 	end
 
 	def jit_compile(jit_string)
@@ -49,8 +55,6 @@ class Literal < Expression
 		when :Integer
 			jit_string << "\x68" #pushq $value
 			write_int_as_4bytes(self.token.svalue.to_i, jit_string)
-#			jit_string << "\x6a" #pushq $value
-#			jit_string << build_proper_hex(self.token.svalue.to_i)
 
 		when :Identifier
 			jit_string <<  "\x48\x8b\x05" #movq ???(%rip), %rax

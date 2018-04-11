@@ -2,7 +2,13 @@ require_relative 'Expression'
 
 class Call < Expression
 #    private Expression function;
-#    private List<Expression> arguments;
+#    private List<Expression> arguments;i
+	param2reg = ["\x5f" ,#mov ???, rdi
+		       		"\x5e" ,#mov ???, rsi
+		       		"\x5a" ,#mov ???, rdx
+		       		"\x59" ,#mov ???, rcx
+		       		"\x41\x58" ,#mov ???, r8
+		       		"\x41\x59"] #mov ???, r9
 
 	attr_accessor :function, :arguments, :nodeId
 
@@ -57,7 +63,26 @@ class Call < Expression
 	end
 
 	def jit_compile(jit_string)
+		if $var_table[self.function.token.svalue] != nil	
 
+			if $var_table[self.function.token.svalue].size == 1
+				raise self.function.token.svalue+" is not a function"
+			end
+			
+			nb_arg = $var_table[self.function.token.svalue][0].size
+			
+			# put all parameters in registers
+			if nb_arg != self.arguments.length
+				raise "Wrong number of argument for function : " + func.token.svalue
+			end
+			for arg_index in 0..(nb_arg - 1)
+				self.arguments[arg_index].jit_compile(jit_string)
+				jit_string << param2reg[arg_index]
+			end
+			jit_string << "\xb8\x00\x00\x00\x00\xe8" #call
+			write_diff_to(jit_string, self.function.token.svalue)
+			jit_string << "\x50"
+		end
 	end
 
 	def compile(env)
@@ -70,10 +95,6 @@ class Call < Expression
 			puti "movl $to_print, %ecx"
 			puti "movl $" + to_print.size.to_s + ", %ecx"
 		end
-
-	end
-
-	def jit_compile(env, jit_string) 
 
 	end
 

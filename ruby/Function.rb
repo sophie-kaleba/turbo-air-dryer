@@ -23,6 +23,35 @@ class Function < Expression
 		return Value.new(:Undefined)
 	end
 
+	def jit_compile(jit_string)
+		if $var_table[self.name.svalue] != nil	
+			raise self.name.svalue + " is already defined!"
+		end
+
+		baby_map = Hash.new(nil)
+
+		for arg_index in 0..parameters.size
+			baby_map[parameters[arg_index]] = arg_index * 8
+		end
+		
+		funjit_string = "\x55\x48\x89\xe5"
+		save_regs(funjit_string)
+		for st in body
+			st.funjit_compile(funjit_string, baby_map)
+		end
+
+		funjit_string << "\xcc"
+		restore_regs(funjit_string)
+		funjit_string << "\x5d\xc3"
+		func_addr = new_func(self.name.svalue, funjit_string)
+
+		$var_table[self.name.svalue] = [self.parameters, func_addr] # get my addr
+		jit_string << "\x68" #push 
+		write_diff_to(jit_string, self.name.svalue)
+
+	end
+
+
 	def to_s()
 		return "Function " + self.name.to_s() + " "
 		+ self.parameters.to_s() + " "

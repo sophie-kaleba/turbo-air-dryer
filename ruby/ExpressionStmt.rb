@@ -18,6 +18,11 @@ class ExpressionStmt
 		return self.expression.compile(expr)
 	end
 
+	def funjit_compile(env, jit_string) 
+		self.expression.funjit_compile(env, jit_string)
+		jit_string << "\x58" #at every ;, pop the result in rax
+	end
+
 	def jit_compile(jit_string)
 		self.expression.jit_compile(jit_string)
 		jit_string << "\x58" #at every ;, pop the result in rax
