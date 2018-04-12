@@ -24,28 +24,37 @@ class Function < Expression
 	end
 
 	def jit_compile(jit_string)
+		param2reg = ["\x57" ,#push rdi
+	       		"\x56" ,#push rsi
+	       		"\x52" ,#push rdx
+	       		"\x51" ,#push rcx
+	       		"\x41\x50" ,#push r8
+	       		"\x41\x51"] #push r9
+
 		if $var_table[self.name.svalue] != nil	
 			raise self.name.svalue + " is already defined!"
 		end
 
-		baby_map = Hash.new(nil)
+		funjit_string = ""
+		save_regs(funjit_string)
 
+		baby_map = Hash.new(nil)
+		
 		for arg_index in 0..(parameters.size - 1)
-			baby_map[parameters[arg_index].svalue] = arg_index * 8
+			baby_map[parameters[arg_index].svalue] = (arg_index * 8)
+			funjit_string << param2reg[arg_index]
 		end
 
-		funjit_string = "\x55\x48\x89\xe5"
-		save_regs(funjit_string)
 		for st in body
 			st.funjit_compile(funjit_string, baby_map)
 		end
 
 		restore_regs(funjit_string)
-		funjit_string << "\x5d\xc3"
+		funjit_string << "\xc3" #ret (in case there is no return in the function)
 		func_addr = new_func(self.name.svalue, funjit_string)
 
-		$var_table[self.name.svalue] = [self.parameters, func_addr] # get my addr
-		jit_string << "\x68" #push 
+		$var_table[self.name.svalue] = [self.parameters, func_addr]
+		jit_string << "\x68" #push the function address
 		write_diff_to(jit_string, self.name.svalue)
 
 	end

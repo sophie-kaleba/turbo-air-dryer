@@ -3,12 +3,6 @@ require_relative 'Expression'
 class Call < Expression
 	#    private Expression function;
 	#    private List<Expression> arguments;i
-	param2reg = ["\x5f" ,#mov ???, rdi
-	      "\x5e" ,#mov ???, rsi
-	      "\x5a" ,#mov ???, rdx
-	      "\x59" ,#mov ???, rcx
-	      "\x41\x58" ,#mov ???, r8
-	      "\x41\x59"] #mov ???, r9
 
 	attr_accessor :function, :arguments, :nodeId
 
@@ -63,6 +57,12 @@ class Call < Expression
 	end
 
 	def jit_compile(jit_string)
+		param2reg = ["\x5f" ,#mov ???, rdi
+	      		"\x5e" ,#mov ???, rsi
+	      		"\x5a" ,#mov ???, rdx
+	      		"\x59" ,#mov ???, rcx
+	      		"\x41\x58" ,#mov ???, r8
+	      		"\x41\x59"] #mov ???, r9
 		if $var_table[self.function.token.svalue] != nil	
 
 			if $var_table[self.function.token.svalue].size == 1
@@ -84,7 +84,7 @@ class Call < Expression
 			jit_string << "\xe8" #call
 			write_diff_to(jit_string, self.function.token.svalue)
 
-			jit_string << "\x50" # push %rax
+			jit_string << "\xcc\x50" # push %rax
 		end
 	end
 

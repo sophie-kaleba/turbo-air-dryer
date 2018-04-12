@@ -23,20 +23,19 @@ for st in body
 end
 
 restore_regs(jit_string) #this part restores rbx, rbp and rsp
-jit_string << "\xc3"
+jit_string << "\xcc\xc3"
 c_write_memory($start_method_segment, jit_string)
 
 
 
 puts
 puts "\e[31;1m===> method segment <===\e[m"
-dump_hex_string(jit_string)
 c_dump_memory($start_method_segment, jit_string.size + 10)
 puts "\e[31;1m========================\e[m"
 
 
 puts "\e[31;1m===> var segment <===\e[m"
-c_dump_memory($start_var_segment, $var_table.size * 80 + 4)
+c_dump_var_segment($start_var_segment)
 puts "\e[31;1m=====================\e[m"
 
 

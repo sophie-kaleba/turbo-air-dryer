@@ -43,10 +43,15 @@ class Literal < Expression
 	def funjit_compile(jit_string, env)
 		case (self.token.getTokenId())
 		when :Integer
-			jit_string << "\x68" #pushq $value
+			jit_string << "\x68" #pushq value
 			write_int_as_4bytes(self.token.svalue.to_i, jit_string)
+		when :Identifier
+			jit_string << "\x48\x8B\x85" #movq ??(%rbp), rax
+			write_int_as_4bytes(env[self.token.svalue], jit_string)
+		
+			jit_string << "\x50" #pushq %rax (take the value of the var)
 		else
-			raise "Not implemented yet"
+			raise "Not implemented yet : #{self.token.getTokenId()}"
 		end
 	end
 

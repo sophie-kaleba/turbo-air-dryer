@@ -22,10 +22,9 @@ class Return
 
 	def funjit_compile(jit_string, env)
 		self.expression.funjit_compile(jit_string, env)
-		jit_string << "\x58"
+		jit_string << "\x58" #pop rax
 		restore_regs(jit_string)
-		jit_string << "\x5d"
-		jit_string << "\xc3"
+		jit_string << "\xc3" #ret
 	end
 
 	def jit_compile(jit_string)

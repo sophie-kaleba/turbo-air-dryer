@@ -274,9 +274,9 @@ class BinaryOp < Expression
 
 			self.expression2.funjit_compile(jit_string, env)
 
-			jit_string <<  "\x48\x8d\x05" # lea (???(%rip)), %rax
+			jit_string <<  "\x48\x8d\x85" # lea (???(%rbp)), %rax
 
-			write_diff_to(jit_string, self.expression1.token.svalue)
+			write_int_as_4bytes(env[self.expression1.token.svalue], jit_string)
 
 			jit_string << "\x5b" #popq %rbx <= expression 2
 			jit_string << "\x48\x89\x18" #movq %rbx, (%rax)
@@ -298,7 +298,7 @@ class BinaryOp < Expression
 
 			jit_string << "\x48\x01\xc3" # addq %rax, %rbx
 
-			jit_string <<  "\x48\x8d\x05" # lea (???(%rip)), %rax
+			jit_string <<  "\x48\x8d\x85" # lea (???(%rip)), %rax
 			write_diff_to(jit_string, var_name)
 
 			jit_string << "\x48\x89\x18" #movq %rbx, (%rax)
