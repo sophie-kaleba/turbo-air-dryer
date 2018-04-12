@@ -41,7 +41,7 @@ class Function < Expression
 		baby_map = Hash.new(nil)
 		
 		for arg_index in 0..(parameters.size - 1)
-			baby_map[parameters[arg_index].svalue] = (arg_index * 8)
+			baby_map[parameters[arg_index].svalue] = -((arg_index + 1) * 8)
 			funjit_string << param2reg[arg_index]
 		end
 
