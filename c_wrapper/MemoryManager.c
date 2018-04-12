@@ -82,7 +82,7 @@ VALUE dump_var_segment(VALUE self, VALUE start)
 {
 	char *ss_start = (char *) NUM2LONG(start);
 	while(ss_start < current_table_offset)
-		printf("%.2x_", (unsigned char) ss_start++);
+		printf("%.2x_", (unsigned char)* ss_start++);
 
 	printf("\n");
 	fflush(stdout);
