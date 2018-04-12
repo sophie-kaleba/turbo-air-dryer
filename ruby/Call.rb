@@ -84,7 +84,7 @@ class Call < Expression
 			jit_string << "\xe8" #call
 			write_diff_to(jit_string, self.function.token.svalue)
 
-			jit_string << "\xcc\x50" # push %rax
+			jit_string << "\x50" # push %rax
 		end
 	end
 

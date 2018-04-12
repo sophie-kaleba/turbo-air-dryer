@@ -23,7 +23,7 @@ for st in body
 end
 
 restore_regs(jit_string) #this part restores rbx, rbp and rsp
-jit_string << "\xcc\xc3"
+jit_string << "\xc3"
 c_write_memory($start_method_segment, jit_string)
 
 
