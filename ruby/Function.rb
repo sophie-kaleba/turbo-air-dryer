@@ -24,31 +24,18 @@ class Function < Expression
 	end
 
 	def jit_compile(jit_string)
-		param2reg = ["\x57", # pushq rdi
-	       "\x56",               # pushq rsi
-	       "\x52",               # pushq rdx
-	       "\x51",        	     # pushq rcx
-	       "\x41\x50",           # pushq r8
-	       "\x41\x51"]           # pushq r9
-
-
 		if $var_table[self.name.svalue] != nil	
 			raise self.name.svalue + " is already defined!"
 		end
 
-		funjit_string = "\x55" # push   rbp
-		funjit_string = "\x48\x89\xe5" # mov    rbp,rsp 
-
-		save_regs(funjit_string)
-
-		# now we're gonna push all the parameter to access them with rsp
 		baby_map = Hash.new(nil)
 
 		for arg_index in 0..(parameters.size - 1)
 			baby_map[parameters[arg_index].svalue] = arg_index * 8
-			funjit_string << param2reg[arg_index]
 		end
 
+		funjit_string = "\x55\x48\x89\xe5"
+		save_regs(funjit_string)
 		for st in body
 			st.funjit_compile(funjit_string, baby_map)
 		end

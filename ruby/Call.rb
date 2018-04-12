@@ -3,6 +3,12 @@ require_relative 'Expression'
 class Call < Expression
 	#    private Expression function;
 	#    private List<Expression> arguments;i
+	param2reg = ["\x5f" ,#mov ???, rdi
+	      "\x5e" ,#mov ???, rsi
+	      "\x5a" ,#mov ???, rdx
+	      "\x59" ,#mov ???, rcx
+	      "\x41\x58" ,#mov ???, r8
+	      "\x41\x59"] #mov ???, r9
 
 	attr_accessor :function, :arguments, :nodeId
 
@@ -57,54 +63,45 @@ class Call < Expression
 	end
 
 	def jit_compile(jit_string)
-		param2reg = ["\x5f", #pop ???, rdi
-	       "\x5e",               #pop ???, rsi
-	       "\x5a",               #pop ???, rdx
-	       "\x59",        	     #pop ???, rcx
-	       "\x41\x58",           #pop ???, r8
-	       "\x41\x59"]           #pop ???, r9
+		if $var_table[self.function.token.svalue] != nil	
 
+			if $var_table[self.function.token.svalue].size == 1
+				raise self.function.token.svalue+" is not a function"
+			end
 
-		if $var_table[self.function.token.svalue] == nil	
-			raise self.function.token.svalue + " is not defined"
+			nb_arg = $var_table[self.function.token.svalue][0].size
+
+			# put all parameters in registers
+			if nb_arg != self.arguments.length
+				raise "Wrong number of argument for function : " + func.token.svalue
+			end
+			for arg_index in 0..(nb_arg - 1)
+				self.arguments[arg_index].jit_compile(jit_string)
+				jit_string << param2reg[arg_index]
+			end
+
+			# jit_string << "\xb8\x00\x00\x00\x00" # mov 0, %eax
+			jit_string << "\xe8" #call
+			write_diff_to(jit_string, self.function.token.svalue)
+
+			jit_string << "\x50" # push %rax
 		end
-
-		if $var_table[self.function.token.svalue].size == 1
-			raise self.function.token.svalue + " is not a function"
-		end
-
-		nb_arg = $var_table[self.function.token.svalue][0].size
-
-		# put all parameters in registers
-		if nb_arg != self.arguments.length
-			raise "Wrong number of argument for function : " + func.token.svalue
-		end
-		for arg_index in 0..(nb_arg - 1)
-			self.arguments[arg_index].jit_compile(jit_string)
-			jit_string << param2reg[arg_index]
-		end
-
-		# jit_string << "\xb8\x00\x00\x00\x00" # mov 0, %eax
-		jit_string << "\xe8" #call
-		write_diff_to(jit_string, self.function.token.svalue)
-
-		jit_string << "\x50" # push %rax
 	end
 
-def compile(env)
-	if (self.function.token.type == :Identifier and self.function.token.svalue == "print") 
-		to_print = self.function.arguments[0].line.to_s + self.function.arguments[0].column.to_s 
-		puti to_print + ":"
-		puti ".string \"" + self.function.arguments[0].svalue.to_s + "\""
-		puti "movl $4, %eax"
-		puti "movl $1, %ebx"
-		puti "movl $to_print, %ecx"
-		puti "movl $" + to_print.size.to_s + ", %ecx"
+	def compile(env)
+		if (self.function.token.type == :Identifier and self.function.token.svalue == "print") 
+			to_print = self.function.arguments[0].line.to_s + self.function.arguments[0].column.to_s 
+			puti to_print + ":"
+			puti ".string \"" + self.function.arguments[0].svalue.to_s + "\""
+			puti "movl $4, %eax"
+			puti "movl $1, %ebx"
+			puti "movl $to_print, %ecx"
+			puti "movl $" + to_print.size.to_s + ", %ecx"
+		end
+
 	end
 
-end
-
-def to_s()
-	return "Call " + self.function.to_s() + " " + self.arguments.to_s();
-end
+	def to_s()
+		return "Call " + self.function.to_s() + " " + self.arguments.to_s();
+	end
 end
