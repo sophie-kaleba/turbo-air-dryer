@@ -82,7 +82,7 @@ class Call < Expression
 
 			# jit_string << "\xb8\x00\x00\x00\x00" # mov 0, %eax
 			jit_string << "\xe8" #call
-			write_diff_to(jit_string, self.function.token.svalue)
+			write_diff_to(jit_string, self.function.token.svalue, c_get_var_segment_addr()+1)
 
 			jit_string << "\x50" # push %rax
 		end
