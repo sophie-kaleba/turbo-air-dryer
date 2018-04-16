@@ -144,6 +144,17 @@ class BinaryOp < Expression
 			jit_string << "\x48\x89\x18" #movq %rbx, (%rax)
 
 			jit_string << "\x53" #pushq %rbx
+		
+		when :Asterisk
+			self.expression1.jit_compile(jit_string)
+			self.expression2.jit_compile(jit_string)
+			jit_string << "\x5b" #popq %rbx
+			jit_string << "\x58" #popq %rax
+
+			jit_string << "\x48\x0f\xaf\xc3" # imul %rax, %rbx
+
+			jit_string << "\x50" #pushq %rax
+
 		when :MinusAssignment
 			if self.expression1.token.getTokenId() != :Identifier
 				raise "Cannot assign to this type:"+self.expression1.token.svalue
@@ -178,7 +189,7 @@ class BinaryOp < Expression
 			jit_string << "\x0f\x94\xc0" # sete %al
 			jit_string << "\x48\x0f\xbe\xc0" #movsqb %al, %rax
 			jit_string << "\x50" #pushq %rax
-			
+
 		when :LessOrEqual
 			self.expression1.jit_compile(jit_string)
 			self.expression2.jit_compile(jit_string)
@@ -282,6 +293,17 @@ class BinaryOp < Expression
 			jit_string << "\x48\x89\x18" #movq %rbx, (%rax)
 
 			jit_string << "\x53" #pushq %rbx
+		
+		when :Asterisk
+			self.expression1.funjit_compile(jit_string, env)
+			self.expression2.funjit_compile(jit_string, env)
+			jit_string << "\x5b" #popq %rbx
+			jit_string << "\x58" #popq %rax
+
+			jit_string << "\x48\x0f\xaf\xc3" # imul %rax, %rbx
+
+			jit_string << "\x50" #pushq %rax
+
 		when :PlusAssignment
 			if self.expression1.token.getTokenId() != :Identifier
 				raise "Cannot assign to this type:"+self.expression1.token.svalue

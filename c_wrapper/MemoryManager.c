@@ -57,8 +57,8 @@ VALUE write_memory(VALUE self, VALUE dst, VALUE src)
 
 VALUE call_function(VALUE self, VALUE func_addr)
 {
-	int (*func)(void) = (int (*)(void)) NUM2LONG(func_addr);
-	return INT2NUM(func());
+	long (*func)(void) = (long (*)(void)) NUM2LONG(func_addr);
+	return LONG2NUM(func());
 }
 
 VALUE dump_memory(VALUE self, VALUE start, VALUE num_size) {
@@ -123,7 +123,7 @@ VALUE update_var(VALUE self, VALUE var_address, VALUE new_var_value)
 
 VALUE get_var(VALUE self, VALUE var_address)
 {
-	return INT2NUM(*(int *)NUM2LONG(var_address));
+	return LONG2NUM(*(long *)NUM2LONG(var_address));
 }
 
 VALUE get_var_segment_addr(VALUE self)
