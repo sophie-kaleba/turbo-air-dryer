@@ -9,11 +9,11 @@ if (ARGC < 1 || ARGC > 2) {
 	exit
 }
 
-set title "Débit moyen pour envoyer n octets"
+set title "Variation du temps d'execution en fonction du rang de fibonacci"
 set grid
 
-set xlabel "Taille des données envoyées"
-set ylabel "Débit en o/s"
+set xlabel "Temps d'execution"
+set ylabel "Fibo rank"
 
 # set style data linespoints
 
@@ -24,11 +24,7 @@ if (ARGC > 1) {
 
 
 plot ARG1 using 1:2 with lines lt rgb "black" \
-	     title "Débit en fonction du nombres d'octets envoyée", \
-	ARG1 using 1:($2 + $3) with lines lt rgb "red" \
-	     title "+ écart-type", \
-	ARG1 using 1:($2 - $3) with lines lt rgb "red"\
-	     title "- écart-type", \
+	     title "Débit en fonction du nombres d'octets envoyé
 
 if (ARGC == 2) {
 	system(sprintf("ps2pdf %s", ARG2))
