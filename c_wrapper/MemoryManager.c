@@ -126,6 +126,11 @@ VALUE get_var(VALUE self, VALUE var_address)
 	return INT2NUM(*(int *)NUM2LONG(var_address));
 }
 
+VALUE get_var_segment_addr(VALUE self)
+{
+	return LONG2NUM((long)current_table_offset);
+}
+
 //////////////////////////////////////
 ////////// probably useless
 /////////////////////////////////////
@@ -150,8 +155,10 @@ void Init_memory_manager() {
 	rb_define_method(MemoryManager, "c_dump_memory", dump_memory, 2);
 	rb_define_method(MemoryManager, "c_init_var_segment", init_var_segment, 1);
 	rb_define_method(MemoryManager, "c_dump_var_segment", dump_var_segment, 1);
+
 	rb_define_method(MemoryManager, "c_add_var", add_var, 1);
 	rb_define_method(MemoryManager, "c_add_func", add_func, 1);
 	rb_define_method(MemoryManager, "c_update_var", update_var, 2);
 	rb_define_method(MemoryManager, "c_get_var", get_var, 1);
+	rb_define_method(MemoryManager, "c_get_var_segment_addr", get_var_segment_addr, 0);
 }
