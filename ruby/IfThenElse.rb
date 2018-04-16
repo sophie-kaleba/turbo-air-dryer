@@ -26,6 +26,36 @@ class IfThenElse
 		puti "jmp "
 	end
 
+	def funjit_compile(jit_string, env)
+		self.condition.funjit_compile(jit_string, env)
+
+		jit_string << "\x58" #popq %rax
+		jit_string << "\x48\x83\xf8\x00" #cmp $0, %rax 
+
+		jit_string << "\x0F\x84" # je ???
+		pos_jne = jit_string.size
+
+		jit_string << "\xcc\xcc\xcc\xcc" # breakpoint
+
+		jit_string << "\x90" # nop after compiling body
+		jit_string << "\x90" # nop after compiling body
+
+		for st in self.thn
+			st.funjit_compile(jit_string, env)
+		end
+
+		jit_string << "\x90" # nop after compiling body
+		jit_string << "\x90" # nop after compiling body
+
+		nb_bytes_wrote = jit_string.size - pos_jne
+
+		puts "jne " + nb_bytes_wrote.to_s + " bytes forward"
+
+		# -4 is the size of the adress
+		write_int_as_4bytes(nb_bytes_wrote - 4, jit_string, pos_jne)
+	end
+
+
 	def jit_compile(jit_string)
 		self.condition.jit_compile(jit_string)
 
@@ -38,9 +68,6 @@ class IfThenElse
 		
 		jit_string << "\xcc\xcc\xcc\xcc" # breakpoint
 
-#		jit_string << "\xcc" # nop after compiling body
-#		jit_string << "\xcc" # nop after compiling body
-		
 		jit_string << "\x90" # nop after compiling body
 		jit_string << "\x90" # nop after compiling body
 
