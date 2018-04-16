@@ -56,6 +56,39 @@ class Call < Expression
 		raise "Function " + self.function.token.svalue.to_s + " not yet implemented"
 	end
 
+	def funjit_compile(jit_string, env)
+		param2reg = ["\x5f" ,#mov ???, rdi
+	      		"\x5e" ,#mov ???, rsi
+	      		"\x5a" ,#mov ???, rdx
+	      		"\x59" ,#mov ???, rcx
+	      		"\x41\x58" ,#mov ???, r8
+	      		"\x41\x59"] #mov ???, r9
+		if $var_table[self.function.token.svalue] != nil	
+
+			if $var_table[self.function.token.svalue].size == 1
+				raise self.function.token.svalue+" is not a function"
+			end
+
+			nb_arg = $var_table[self.function.token.svalue][0].size
+
+			# put all parameters in registers
+			if nb_arg != self.arguments.length
+				raise "Wrong number of argument for function : " + func.token.svalue
+			end
+			for arg_index in 0..(nb_arg - 1)
+				self.arguments[arg_index].funjit_compile(jit_string, env)
+				jit_string << param2reg[arg_index]
+			end
+
+			# jit_string << "\xb8\x00\x00\x00\x00" # mov 0, %eax
+			jit_string << "\xe8" #call
+			write_diff_to(jit_string, self.function.token.svalue)
+
+			jit_string << "\x50" # push %rax
+		end
+	end
+
+
 	def jit_compile(jit_string)
 		param2reg = ["\x5f" ,#mov ???, rdi
 	      		"\x5e" ,#mov ???, rsi

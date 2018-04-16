@@ -40,20 +40,25 @@ class Function < Expression
 
 		baby_map = Hash.new(nil)
 		
+		func_addr = c_get_var_segment_addr()
+		puts func_addr.to_s(16)
+		$var_table[self.name.svalue] = [self.parameters, func_addr]
+		
 		for arg_index in 0..(parameters.size - 1)
 			baby_map[parameters[arg_index].svalue] = -((arg_index + 1) * 8)
 			funjit_string << param2reg[arg_index]
 		end
-
+		
 		for st in body
 			st.funjit_compile(funjit_string, baby_map)
 		end
 
 		restore_regs(funjit_string)
 		funjit_string << "\xc3" #ret (in case there is no return in the function)
-		func_addr = new_func(self.name.svalue, funjit_string)
+		dump_hex_string(funjit_string)
+		other_func_addr = write_func(funjit_string)
+		puts "other:#{other_func_addr.to_s(16)}"
 
-		$var_table[self.name.svalue] = [self.parameters, func_addr]
 		jit_string << "\x68" #push the function address
 		write_diff_to(jit_string, self.name.svalue)
 

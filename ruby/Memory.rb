@@ -22,13 +22,8 @@ def new_var(var_name, var_value=0)
 	return new_var_addr
 end
 
-def new_func(func_name, func_value=0)
-	if $var_table[func_name] != nil
-		raise "Function already in use " + func_name.to_s
-	end
-	new_func_addr = c_add_func(func_value)
-	$var_table[func_name] = new_func_addr
-	return new_func_addr
+def write_func(func_body)
+	return c_add_func(func_body)
 end
 
 def update_var(var_name, new_var_value)
