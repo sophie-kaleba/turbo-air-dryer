@@ -46,13 +46,16 @@ class Literal < Expression
 			jit_string << "\x68" #pushq value
 			write_int_as_4bytes(self.token.svalue.to_i, jit_string)
 		when :Identifier
-			if env[self.token.svalue] == nil
+			if env[self.token.svalue] != nil
+				jit_string << "\x48\x8B\x85" #movq ??(%rbp), rax
+				write_int_as_4bytes(env[self.token.svalue], jit_string)
+
+				jit_string << "\x50" #pushq %rax (take the value of the var)
+			elsif $var_table[self.token.svalue] != nil
+				jit_compile(jit_string)
+			else
 				raise "Variable \"#{self.token.svalue}\" not declared on line #{self.token.line}"
 			end
-			jit_string << "\x48\x8B\x85" #movq ??(%rbp), rax
-			write_int_as_4bytes(env[self.token.svalue], jit_string)
-		
-			jit_string << "\x50" #pushq %rax (take the value of the var)
 		else
 			raise "Not implemented yet : #{self.token.getTokenId()}"
 		end
