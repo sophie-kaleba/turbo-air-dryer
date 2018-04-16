@@ -46,6 +46,9 @@ class Literal < Expression
 			jit_string << "\x68" #pushq value
 			write_int_as_4bytes(self.token.svalue.to_i, jit_string)
 		when :Identifier
+			if env[self.token.svalue] == nil
+				raise "Variable \"#{self.token.svalue}\" not declared on line #{self.token.line}"
+			end
 			jit_string << "\x48\x8B\x85" #movq ??(%rbp), rax
 			write_int_as_4bytes(env[self.token.svalue], jit_string)
 		
