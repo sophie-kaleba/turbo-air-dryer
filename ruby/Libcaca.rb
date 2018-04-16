@@ -1,4 +1,3 @@
-
 def build_proper_hex(hex_number)
 	return eval("\"\\x"+hex_number.to_s(16)+"\"")
 	# "TADA"
@@ -29,7 +28,7 @@ def write_diff_to(jit_string, var_name)
 end
 
 def dump_hex_string(string)
-	puts string.each_byte.map { |b| b.to_s(16) + "_"}.join
+	puts string.each_byte.map { |b| sprintf("%.2x_", b)}.join
 end
 
 def save_regs(jit_string)
