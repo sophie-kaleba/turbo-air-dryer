@@ -24,7 +24,7 @@ def generate_fibo(n, filename)
 	filebo.close
 end
 
-REPEAT=5
+REPEAT=10
 
 if (ARGV.size != 4)
 	puts "usage : " + __FILE__ + " exe start end step"
@@ -36,7 +36,8 @@ START   = ARGV[1].to_i
 FINISH  = ARGV[2].to_i
 STEP    = ARGV[3].to_i
 
-filename = "#{START}_#{FINISH}_#{STEP}.dat"
+filename_exe = /.*\/(.*)\..*/.match(EXE)[1]
+filename = "#{filename_exe}_#{START}_#{FINISH}_#{STEP}.dat"
 
 if File.exist?(filename)
 	printf "\e[31m ===> File #{filename} already exist! -  press 'y' to delete it: \e[m"
@@ -62,12 +63,11 @@ for fibo_rank in ((START..FINISH).step(STEP))
 
 	for _ in 0..REPEAT
 		res = `(/usr/bin/time -f "%e" ./#{EXE} #{parsed_file} 1> /dev/null) 2>&1`
-#		puts res
+
 		current_iteration.push(res.to_f)
 		print "#"
 	end
 
-	# maintenant on va retirer les 10% les plus éloigné de la moyenne
 	average = compute_average(current_iteration)
 
 	file.write("#{fibo_rank} #{average}\n")
