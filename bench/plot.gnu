@@ -15,6 +15,8 @@ set grid
 set xlabel "Fibo rank"
 set ylabel "Temps d'execution"
 
+set xrange [0:45]
+
 # set style data linespoints
 
 if (ARGC > 1) {
