@@ -54,7 +54,7 @@ class Literal < Expression
 			elsif $var_table[self.token.svalue] != nil
 				jit_string <<  "\x48\x8b\x05" #movq ???(%rip), %rax
 				# On récupère la dernière adresse de memory manager
-				current_addr = c_get_var_addr
+				current_addr = c_get_var_segment_addr
 
 				var_addr = $var_table[self.token.svalue]
 				diff_rip = var_addr - (current_addr + jit_string.size) - 4 - 2

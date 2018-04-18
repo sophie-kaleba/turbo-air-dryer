@@ -285,9 +285,22 @@ class BinaryOp < Expression
 
 			self.expression2.funjit_compile(jit_string, env)
 
-			jit_string <<  "\x48\x8d\x85" # lea (???(%rbp)), %rax
+			if env[self.expression1.token.svalue] != nil
+				jit_string <<  "\x48\x8d\x85" # lea (???(%rbp)), %rax
+				write_int_as_4bytes(env[self.expression1.token.svalue], jit_string)
+			
+			elsif $var_table[self.expression1.token.svalue] != nil
+				jit_string <<  "\x48\x8d\x05" #lea ???(%rip), %rax
+				# On récupère la dernière adresse de memory manager
+				current_addr = c_get_var_segment_addr
 
-			write_int_as_4bytes(env[self.expression1.token.svalue], jit_string)
+				var_addr = $var_table[self.expression1.token.svalue]
+				diff_rip = var_addr - (current_addr + jit_string.size) - 4 - 2
+				write_int_as_4bytes(diff_rip, jit_string)
+
+			else
+				raise "Variable \"#{self.expression1.token.svalue}\" not declared on line #{self.expression1.token.line}"
+			end
 
 			jit_string << "\x5b" #popq %rbx <= expression 2
 			jit_string << "\x48\x89\x18" #movq %rbx, (%rax)

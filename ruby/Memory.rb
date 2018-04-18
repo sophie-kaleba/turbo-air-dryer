@@ -1,7 +1,7 @@
 require_relative "../c_wrapper/memory_manager"
 include MemoryManager
 
-$var_table = {}
+$var_table = Hash.new(nil) 
 
 def setup_memory_segment()
 	$start_var_segment = c_init_memory(4096, 1)
