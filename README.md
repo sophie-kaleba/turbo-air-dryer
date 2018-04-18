@@ -1,6 +1,8 @@
 Sophie Kaleba </br>
 Thomas Campistron
 
+naive js JIT compiler developped together with @irevoire
+
 # JIT
 
 ## Usage c-wrapper
