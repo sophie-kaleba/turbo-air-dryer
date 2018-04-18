@@ -24,9 +24,9 @@ if (ARGC > 0) {
 
 plot "data/Jit_0_50_1.dat" using 1:2 with lines lw 3 lt rgb "black" \
 	     title "Jit", \
-	     "data/node_1_100_1.dat" using 1:2 with lines lw 3  lt rgb "red" \
-	     title "unserializer", \
 	     "data/unserializer_0_50_1.dat" using 1:2 with lines lw 3  lt rgb "orange" \
+	     title "unserializer", \
+	     "data/node_1_100_1.dat" using 1:2 with lines lw 3  lt rgb "red" \
 	     title "nodejs", \
 	     "data/go_1_100_1.dat" using 1:2 with lines lw 3  lt rgb "cyan" \
 	     title "golang", \
