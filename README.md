@@ -1,7 +1,7 @@
 Sophie Kaleba </br>
 Thomas Campistron
 
-naive JIT developped together with @irevoire
+naive js JIT compiler developped together with @irevoire
 
 # JIT
 
