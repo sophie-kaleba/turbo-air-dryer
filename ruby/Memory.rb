@@ -1,4 +1,4 @@
-require_relative "../c_wrapper/memory_manager"
+require_relative "c_wrapper/memory_manager"
 include MemoryManager
 
 $var_table = Hash.new(nil) 
