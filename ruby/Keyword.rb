@@ -1,4 +1,4 @@
-class Keyword < TokenType
+class Keyword
 	attr_accessor :tokenId, :tokenString
 
 	def initialize (tokenId, tokenString)

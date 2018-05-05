@@ -1,6 +1,4 @@
-require_relative 'TokenType'
-
-class ValuedToken < TokenType
+class ValuedToken
 	#    private final int tokenId;
 	attr_accessor :tokenId
 

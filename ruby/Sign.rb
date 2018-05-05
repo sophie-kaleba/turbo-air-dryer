@@ -1,6 +1,4 @@
-require_relative 'TokenType'
-
-class Sign < TokenType
+class Sign
 	attr_accessor :tokenId, :tokenString
 
 	def initialize (tokenId, tokenString)
