@@ -67,7 +67,7 @@ We then watched why we was so slow on startup using [ruby-prof](https://github.c
 
 ![profiler visualisation](doc/ruby_interpreter_profiler.png)
 
-As most of the time was losed in "require\_relative" function (which is the function you use when you use multiple file in ruby) we decided to move on another language.
+As most of the time was lost in "require\_relative" function (which is the function you use when you use multiple file in ruby) we decided to move on another language.
 
 
 And as we both wanted to learn cpp we started to recode everything in cpp.
