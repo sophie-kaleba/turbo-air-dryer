@@ -1,8 +1,7 @@
-require_relative 'Expression'
 require_relative "Libcaca.rb"
 require_relative "Memory.rb"
 
-class Literal < Expression
+class Literal
 #	private Token token
 	attr_accessor :token, :nodeId
 

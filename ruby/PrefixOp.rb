@@ -1,7 +1,6 @@
 require_relative 'Value'
-require_relative 'Expression'
 
-class PrefixOp < Expression
+class PrefixOp
 #	private Token token
 #	private Expression expression
 	attr_accessor :token, :expression, :nodeId

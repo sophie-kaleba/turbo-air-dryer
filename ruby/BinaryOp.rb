@@ -1,8 +1,7 @@
 require_relative 'Value'
-require_relative 'Expression'
 
 # Expression
-class BinaryOp < Expression
+class BinaryOp
 	#	private Token token
 	#	private Expression expression1
 	#	private Expression expression2

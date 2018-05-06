@@ -1,6 +1,4 @@
-require_relative 'Expression'
-
-class PostfixOp < Expression
+class PostfixOp
 	#	private Token token;
 	#	private Expression expression;
 	attr_accessor :token, :expression, :nodeId

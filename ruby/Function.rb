@@ -1,4 +1,4 @@
-class Function < Expression
+class Function
 	#    private Token name
 	#    private List<Token> parameters
 	#    private List<Statement> body

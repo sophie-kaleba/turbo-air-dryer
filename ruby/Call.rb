@@ -1,6 +1,4 @@
-require_relative 'Expression'
-
-class Call < Expression
+class Call
 	#    private Expression function;
 	#    private List<Expression> arguments;i
 
