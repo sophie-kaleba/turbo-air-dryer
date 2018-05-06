@@ -1,18 +1,18 @@
-Thomas Campistron </br>
-Sophie Kaleba </br>
+Thomas Campistron ([@irevoire](https://github.com/irevoire))</br>
+Sophie Kaleba (owner of the repo)</br>
 
 
-naive js JIT compiler developped together with @irevoire
+naive js JIT compiler developped together with @irevoire in a courses at [Lille1](http://fil.univ-lille1.fr/) given by [Gilles Grimaud](http://www.lifl.fr/~grimaud/) and [Samuel Hym](http://www.lifl.fr/~hym/).
 Will undergo some heavy refactoring in the future
 
-# JIT
+# USAGE
 
-## Usage c-wrapper
+In order to do anything with this Jit / Interpreter you'll need to parse your file.
 
-- ```ruby extconf.rb ; make```
-- Run ```irb```, then, ```require './memory_manager'```, then ```include MemoryManager```
+Because this project was a college project at first we didn't code our own lexer / parser and used the one provided in our course : __jsp__
 
-Else 
-- from root directory, ```./c_wrapper/ruby extconf.rb ; ./c_wrapper/make```
-- ```jsp | ./ruby/Jit.rb```
-- enter the expression you want to compile (MUST end with a ;), then type ctrl+D
+```
+git clone http://www.fil.univ-lille1.fr/~hym/d/jsp.git
+```
+
+
