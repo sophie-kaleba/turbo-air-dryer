@@ -1,16 +1,16 @@
 #pragma once
-#include "string"
+
+#include <string>
 
 class Token {
+	public:
+		int type;
+		int line;
+		int column;
+		void * value;
+		std::string svalue;
 
-public:
-	int type;
-	int line;
-	int column;
-	void * value;
-	std::string svalue;
-
-	Token(int type, int line, int column, void * value);
-	int get_token_id();
-	std::string to_string();
+		Token(int type, int line, int column, void *value);
+		int get_token_id();
+		std::string to_string();
 };
