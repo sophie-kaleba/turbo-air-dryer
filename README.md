@@ -2,7 +2,7 @@ Thomas Campistron ([@irevoire](https://github.com/irevoire))</br>
 Sophie Kaleba (owner of the repo)</br>
 
 
-naive js JIT compiler developped together with @irevoire in a courses at [Lille1](http://fil.univ-lille1.fr/) given by [Gilles Grimaud](http://www.lifl.fr/~grimaud/) and [Samuel Hym](http://www.lifl.fr/~hym/).
+Naive js JIT compiler developped together with @irevoire in a course at [Lille1](http://fil.univ-lille1.fr/) given by [Gilles Grimaud](http://www.lifl.fr/~grimaud/) and [Samuel Hym](http://www.lifl.fr/~hym/).
 Will undergo some heavy refactoring in the future
 
 # USAGE
@@ -17,7 +17,7 @@ git clone http://www.fil.univ-lille1.fr/~hym/d/jsp.git
 
 # The end of the courses
 
-Our purpose in the course was only to compile a *bad* fibonacci function like that ;
+Our purpose in the course was only to compile a *bad* fibonacci functions like that ;
 
 ```js
 def fibo(n) {
@@ -57,17 +57,17 @@ Another group of the courses gave us their project, they did a C interpreter wit
 
 ## Conclusion
 
-Our Interpreter is so bad at the start that we has no reason to start interpreting thing and then move to the Jit.
+Our Interpreter is so bad at the start that we had no reason to start interpreting thing and then move to the Jit.
 But in the end, as we expected, the Jit is way more powerful than the two interpreter.
 
 
 # After the courses
 
-We then watched why we was so slow on startup using [ruby-prof](https://github.com/ruby-prof/ruby-prof) and [qcachegrind](https://github.com/KDE/kcachegrind) :
+We then watched why we were so slow on startup using [ruby-prof](https://github.com/ruby-prof/ruby-prof) and [qcachegrind](https://github.com/KDE/kcachegrind) :
 
 ![profiler visualisation](doc/ruby_interpreter_profiler.png)
 
-As most of the time was lost in "require\_relative" function (which is the function you use when you use multiple file in ruby) we decided to move on another language.
+As most of the time was lost in "require\_relative" function (which is the function you use when you use multiple file in ruby), we decided to move on another language.
 
 
 And as we both wanted to learn cpp we started to recode everything in cpp.
