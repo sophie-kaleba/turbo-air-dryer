@@ -4,7 +4,8 @@ MAINTAINER Thomas Campistron <https://github.com/irevoire>
 
 # update arch because why not
 RUN pacman -Syu --noconfirm ; \
-	pacman -Scc --noconfirm
+	pacman -Scc --noconfirm ; rm -rf /var/cache/pacman/pkg/*
+# pacman seems to not clear the cache when we do Scc so I'm gonna do it manually
 
 # install everything you need
 RUN pacman -S \
@@ -15,7 +16,7 @@ RUN pacman -S \
 	vim \
 	zsh \
 	--noconfirm ; \
-	pacman -Scc --noconfirm
+	pacman -Scc --noconfirm ; rm -rf /var/cache/pacman/pkg/*
 
 # get theme for zsh and vim
 RUN git clone http://git.irevoire.ovh/irevoire/dotfiles.git ; \
@@ -30,7 +31,8 @@ RUN pacman -S stack --noconfirm ; \
 	mv /jsp/.stack-work/install/x86_64-linux-tinfo6/lts-7.8/8.0.1/bin/jsp /bin/jsp ; \
 	rm -rf /jsp ; \
 	pacman -Rns stack --noconfirm ; \
-	rm -rf ~/.stack
+	pacman -Scc stack --noconfirm ; \
+	rm -rf ~/.stack /var/cache/pacman/pkg/*
 # we need to remove stack because it takes about 4Go
 
 # get the project
