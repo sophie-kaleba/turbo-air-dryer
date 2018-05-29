@@ -31,6 +31,7 @@ RUN rm -rf jsp
 
 # get the project
 RUN git clone https://github.com/sophie-kaleba/turbo-air-dryer.git
+RUN cd /turbo-air-dryer/ruby/c_wrapper ; ruby extconf.rb ; make
 
 ENTRYPOINT zsh
 
