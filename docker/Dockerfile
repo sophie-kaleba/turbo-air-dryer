@@ -8,25 +8,28 @@ RUN pacman -Syu --noconfirm ; \
 # pacman seems to not clear the cache when we do Scc so I'm gonna do it manually
 
 # install everything you need
-RUN pacman -S \
+RUN pacman -Syu \
 	gcc \
+	gdb \
 	git \
 	make \
 	ruby \
+	tmux \
+	valgrind \
 	vim \
 	zsh \
 	--noconfirm ; \
 	pacman -Scc --noconfirm ; rm -rf /var/cache/pacman/pkg/*
 
 # get theme for zsh and vim
-RUN git clone http://git.irevoire.ovh/irevoire/dotfiles.git ; \
+RUN git clone https://github.com/irevoire/dotfiles.git ; \
 	cd dotfiles ; mv vim/vim ~/.vim ; mv vim/vimrc ~/.vimrc ; \
 	mv zsh/zshrc ~/.zshrc ; \
 	rm -rf /dotfiles
 
 # Now we get jsp
 # in order to compile jsp we need stack
-RUN pacman -S stack --noconfirm ; \
+RUN pacman -Syu stack --noconfirm ; \
 	git clone http://www.fil.univ-lille1.fr/~hym/d/jsp.git ; cd jsp ; stack build ; \
 	mv /jsp/.stack-work/install/x86_64-linux-tinfo6/lts-7.8/8.0.1/bin/jsp /bin/jsp ; \
 	rm -rf /jsp ; \
